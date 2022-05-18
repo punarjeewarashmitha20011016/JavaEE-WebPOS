@@ -1,0 +1,14 @@
+drop database if exists WebPos;
+create database if not exists WebPos;
+use WebPos;
+drop table if exists Admin;
+create table if not exists Admin(
+	id VARCHAR(6),
+	name VARCHAR(100),
+	nic VARCHAR(12),
+	contactNo INT(10),
+	username VARCHAR(100),
+	password VARCHAR(100),
+	address VARCHAR(100),
+	constraint primary key(id)
+);

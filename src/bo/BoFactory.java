@@ -2,6 +2,7 @@ package bo;
 
 import bo.custom.impl.AdminCashierLoginBOImpl;
 import bo.custom.impl.AdminFormSignUpBoImpl;
+import bo.custom.impl.CashierFormSignUpBOImpl;
 
 public class BoFactory {
     private static BoFactory boFactory;
@@ -19,12 +20,14 @@ public class BoFactory {
                 return new AdminFormSignUpBoImpl();
             case AdminCashierLogin:
                 return new AdminCashierLoginBOImpl();
+            case cashierFormSignUp:
+                return new CashierFormSignUpBOImpl();
             default:
                 return null;
         }
     }
 
     public enum BoTypes {
-        AdminFormSignUp, AdminCashierLogin
+        AdminFormSignUp, AdminCashierLogin, cashierFormSignUp
     }
 }

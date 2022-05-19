@@ -12,3 +12,15 @@ create table if not exists Admin(
 	address VARCHAR(100),
 	constraint primary key(id)
 );
+
+drop table if exists cashier;
+create table if not exists cashier(
+    id VARCHAR(6),
+    name VARCHAR(100),
+    nic VARCHAR(12),
+    contactNo INT(10),
+    username VARCHAR(100),
+    password VARCHAR(100),
+    address VARCHAR(100),
+    constraint primary key(id)
+);

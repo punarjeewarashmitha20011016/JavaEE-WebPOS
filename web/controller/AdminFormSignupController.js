@@ -134,6 +134,7 @@ addAdminSignUpDetailsBtn.click(function () {
         address: signUpAdminAddress.val()
     }
     if (confirm('Do you want to save this admin details') == true) {
+        ifAdminExists();
         if (checkIfTrueOrFalseReturnedFromSearchAdminDetails == true) {
             alert('This ' + signUpAdminId.val() + ' already exists');
             clearFieldsInAdminSignup();
@@ -168,8 +169,7 @@ addAdminSignUpDetailsBtn.click(function () {
     } else {
         alert('Saving admin details of ' + signUpAdminId.val() + ' is unsuccessful');
         clearFieldsInAdminSignup();
-        let id = generateAdminId();
-        signUpAdminId.val(id);
+        generateAdminId();
         setAdminInputBordersReset();
         return;
     }
@@ -180,7 +180,10 @@ updateAdminSignUpDetailsBtn.click(function () {
         ifAdminExists();
         console.log(checkIfAdminExists + " - checkIf Admin exists")
         if (checkIfAdminExists == false) {
-            alert('Entered admin details not exists')
+            alert('admin details not exists')
+            clearFieldsInAdminSignup();
+            setAdminInputBordersReset();
+            generateAdminId();
         } else {
             console.log('else eke ine')
             let admin = {
@@ -219,7 +222,6 @@ updateAdminSignUpDetailsBtn.click(function () {
         alert('Updating admin ' + signUpAdminId.val() + ' is unsuccessful');
         clearFieldsInAdminSignup();
         generateAdminId();
-        /*signUpAdminId.val(id);*/
         setAdminInputBordersReset();
         return;
     }
@@ -228,26 +230,35 @@ updateAdminSignUpDetailsBtn.click(function () {
 deleteAdminSignUpDetailsBtn.off('click');
 deleteAdminSignUpDetailsBtn.click(function () {
     if (confirm('Do you want to delete this admin details') == true) {
-        $.ajax({
-            url: "http://localhost:8080/WebPosEE/admin?adminID=" + signUpAdminId.val(),
-            method: "DELETE",
-            success: function (resp) {
-                if (resp.status == 200) {
-                    setDataToTheAdminTable();
-                    clearFieldsInAdminSignup();
-                    setAdminInputBordersReset();
-                    generateAdminId();
-                } else if (resp.status == 400) {
-                    alert(resp.message);
-                } else {
-                    alert(resp.data);
+        ifAdminExists();
+        if (checkIfAdminExists == false) {
+            alert('admin details not exists')
+            clearFieldsInAdminSignup();
+            setAdminInputBordersReset();
+            generateAdminId();
+        } else {
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/admin?adminID=" + signUpAdminId.val(),
+                method: "DELETE",
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        setDataToTheAdminTable();
+                        clearFieldsInAdminSignup();
+                        setAdminInputBordersReset();
+                        generateAdminId();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                    } else {
+                        alert(resp.data);
+                    }
+                },
+                error: function (ob, textstatus, error) {
+                    alert(error)
                 }
-            },
-            error: function (ob, textstatus, error) {
-                alert(error)
-            }
-        })
+            })
+        }
     } else {
+        alert("Deleting admin details is unsuccessful")
         clearFieldsInAdminSignup();
         setAdminInputBordersReset();
         generateAdminId();
@@ -267,9 +278,9 @@ function ifAdminExists() {
         success: function (resp) {
             if (resp.status == 200) {
                 console.log(resp.bool);
-                setDataToCheckAdminExists(resp.bool)
+                setDataToCheckAdminExists(resp.bool);
             } else if (resp.status == 400) {
-                alert(resp.message);
+                setDataToCheckAdminExists(resp.bool);
             } else {
                 alert(resp.data);
             }

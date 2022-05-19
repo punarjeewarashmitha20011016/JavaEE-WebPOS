@@ -8,5 +8,5 @@ import java.sql.SQLException;
 public interface AdminCashierLoginBO extends SuperBo {
     public boolean ifAdminExists(DataSource dataSource, String userName,String password) throws SQLException;
 
-    public boolean ifCashierExists(DataSource dataSource, String id);
+    public boolean ifCashierExists(DataSource dataSource, String userName,String password) throws SQLException;
 }

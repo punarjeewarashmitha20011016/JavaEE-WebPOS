@@ -6,7 +6,7 @@ var signUpUserName = $('#signUpUserName');
 var signUpPassword = $('#signUpPassword');
 var signUpAddress = $('#signUpAddress');
 
-var signupIdPattern = /^(S-)[0-9]{3}$/;
+var signupIdPattern = /^(C-)[0-9]{3}$/;
 var signupNamePattern = /^[A-z0-9]{3,}[ ]*[A-z]*$/;
 var signupNicPattern = /^([0-9]{9}[v])|([0-9]{12})$/;
 var signupContactNoPattern = /^[0-9]{10}$/;
@@ -30,19 +30,21 @@ var cashierDetailsTable = $('#cashierDetailsTable');
 
 
 var fieldsArray = [signUpId, signUpName, signUpNic, signUpContactNo, signUpUserName, signUpPassword, signUpAddress];
+var checkIfCashierExists;
+console.log("init check bool - " + checkIfCashierExists)
+
 
 $('#signUpId,#signUpName,#signUpNic,#signUpContactNo,#signUpUserName,#signUpPassword,#signUpAddress').off('keydown');
-$('#signUpId,#signUpName,#signUpNic,#signUpContactNo,#signUpUserName,#signUpPassword,#signUpAddress').keydown(function(e) {
+$('#signUpId,#signUpName,#signUpNic,#signUpContactNo,#signUpUserName,#signUpPassword,#signUpAddress').keydown(function (e) {
     if (e.key == 'Tab') {
         e.preventDefault();
     }
 });
 
-let id = generateId();
-signUpId.val(id);
+generateId();
 
 signUpId.off('keyup');
-signUpId.keyup(function(e) {
+signUpId.keyup(function (e) {
     let index = 0;
     if (validate(signupIdPattern, fieldsArray, index, e, addSignUpDetailsBtn, updateSignUpDetailsBtn, deleteSignUpDetailsBtn) == true) {
         signUpIdLbl.text('Id')
@@ -56,7 +58,7 @@ signUpId.keyup(function(e) {
 })
 
 signUpName.off('keyup');
-signUpName.keyup(function(e) {
+signUpName.keyup(function (e) {
     let index = 1;
     if (validate(signupNamePattern, fieldsArray, index, e, addSignUpDetailsBtn, updateSignUpDetailsBtn, deleteSignUpDetailsBtn) == true) {
         signUpNameLbl.text('Name')
@@ -67,7 +69,7 @@ signUpName.keyup(function(e) {
 })
 
 signUpNic.off('keyup');
-signUpNic.keyup(function(e) {
+signUpNic.keyup(function (e) {
     let index = 2;
     if (validate(signupNicPattern, fieldsArray, index, e, addSignUpDetailsBtn, updateSignUpDetailsBtn, deleteSignUpDetailsBtn) == true) {
         signUpNicLbl.text('Nic')
@@ -78,7 +80,7 @@ signUpNic.keyup(function(e) {
 })
 
 signUpContactNo.off('keyup');
-signUpContactNo.keyup(function(e) {
+signUpContactNo.keyup(function (e) {
     let index = 3;
     if (validate(signupContactNoPattern, fieldsArray, index, e, addSignUpDetailsBtn, updateSignUpDetailsBtn, deleteSignUpDetailsBtn) == true) {
         signUpContactNoLbl.text('Contact No')
@@ -89,7 +91,7 @@ signUpContactNo.keyup(function(e) {
 })
 
 signUpUserName.off('keyup');
-signUpUserName.keyup(function(e) {
+signUpUserName.keyup(function (e) {
     let index = 4;
     if (validate(signupUserNamePattern, fieldsArray, index, e, addSignUpDetailsBtn, updateSignUpDetailsBtn, deleteSignUpDetailsBtn) == true) {
         signUpUserNameLbl.text('User Name')
@@ -100,7 +102,7 @@ signUpUserName.keyup(function(e) {
 })
 
 signUpPassword.off('keyup');
-signUpPassword.keyup(function(e) {
+signUpPassword.keyup(function (e) {
     let index = 5;
     if (validate(signupPasswordPattern, fieldsArray, index, e, addSignUpDetailsBtn, updateSignUpDetailsBtn, deleteSignUpDetailsBtn) == true) {
         signUpPasswordLbl.text('Password')
@@ -111,7 +113,7 @@ signUpPassword.keyup(function(e) {
 })
 
 signUpAddress.off('keyup');
-signUpAddress.keyup(function(e) {
+signUpAddress.keyup(function (e) {
     let index = 6;
     if (validate(signupAddressPattern, fieldsArray, index, e, addSignUpDetailsBtn, updateSignUpDetailsBtn, deleteSignUpDetailsBtn) == true) {
         signUpAddressLbl.text('Address')
@@ -121,45 +123,111 @@ signUpAddress.keyup(function(e) {
     }
 })
 
+function setCheckIfCashierExistsVariable(bool) {
+    checkIfCashierExists = bool;
+}
+
+function ifCashierExists() {
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/cashier?option=ifCashierExists&cashierId=" + signUpId.val(),
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            if (resp.status == 200) {
+                setCheckIfCashierExistsVariable(resp.bool);
+            } else if (resp.status == 400) {
+                console.log("response in check - " + resp.bool)
+                setCheckIfCashierExistsVariable(resp.bool);
+            } else {
+                alert(resp.data);
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
+        }
+    })
+}
+
 addSignUpDetailsBtn.off('click');
-addSignUpDetailsBtn.click(function() {
-    if (searchSignupDetails() == true) {
-        alert('This ' + signUpId.val() + ' already exists');
-        clearFieldsInSignup();
-        setCashierInputBordersReset();
-        return;
+addSignUpDetailsBtn.click(function () {
+    let cashierDetails = {
+        id: signUpId.val(),
+        name: signUpName.val(),
+        nic: signUpNic.val(),
+        contactNo: signUpContactNo.val(),
+        userName: signUpUserName.val(),
+        password: signUpPassword.val(),
+        address: signUpAddress.val()
     }
 
-    var signupDetails = new Signup(signUpId.val(), signUpName.val(), signUpNic.val(), signUpContactNo.val(), signUpUserName.val(), signUpPassword.val(), signUpAddress.val());
     if (confirm("Do you want to add this details. If yes please enter Ok button") == true) {
-        signupArray.push(signupDetails);
-        setDataToTheCashierTable();
-        clearFieldsInSignup();
-        let id = generateId();
-        signUpId.val(id);
-        setCashierInputBordersReset();
-
+        ifCashierExists();
+        console.log("check if cashier exists in post method - " + checkIfCashierExists)
+        if (checkIfCashierExists == false) {
+            alert('Cashier exists');
+            clearFieldsInSignup()
+            generateId();
+            setCashierInputBordersReset();
+            return;
+        } else {
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/cashier",
+                method: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(cashierDetails),
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        alert(resp.message);
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                    } else {
+                        alert(resp.data);
+                    }
+                },
+                error: function (ob, textstatus, error) {
+                    alert(error);
+                }
+            })
+        }
     } else {
         alert('Adding signup details for signup Id ' + signUpId.val() + ' is unsuccessful.');
         clearFieldsInSignup()
-        let id = generateId();
-        signUpId.val(id);
+        generateId();
         setCashierInputBordersReset();
     }
 })
 
 function searchSignupDetails() {
-    for (let i = 0; i < signupArray.length; i++) {
-        if (signupArray[i].getId() == signUpId.val()) {
-            signUpName.val(signupArray[i].getName());
-            signUpNic.val(signupArray[i].getNic());
-            signUpContactNo.val(signupArray[i].getContactNo());
-            signUpUserName.val(signupArray[i].getUserName());
-            signUpPassword.val(signupArray[i].getPassword());
-            signUpAddress.val(signupArray[i].getAddress());
-            return true;
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/cashier?option=searchCashier&cashierId=" + signUpId.val(),
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            if (resp.status == 200) {
+                signUpId.val(resp.id);
+                signUpName.val(resp.name);
+                signUpNic.val(resp.nic);
+                signUpContactNo.val(resp.contactNo);
+                signUpUserName.val(resp.userName);
+                signUpPassword.val(resp.password);
+                signUpAddress.val(resp.address);
+            } else if (resp.status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
         }
-    }
+    })
 }
 
 function clearFieldsInSignup() {
@@ -173,116 +241,138 @@ function clearFieldsInSignup() {
 }
 
 updateSignUpDetailsBtn.off('click');
-updateSignUpDetailsBtn.click(function() {
-    let check = ifSignupDetailsExists();
-    if (check == true) {
-        if (confirm('Do you want to update the signup details relevant to id - ' + signUpAdminId.val() + '') == true) {
-            for (let i = 0; i < signupArray.length; i++) {
-                if (signupArray[i].getId() == signUpId.val()) {
-                    console.log(signUpName.val())
-                    signupArray[i].setName(signUpName.val());
-                    signupArray[i].setNic(signUpNic.val());
-                    signupArray[i].setContactNo(signUpContactNo.val());
-                    signupArray[i].setUserName(signUpUserName.val());
-                    signupArray[i].setPassword(signUpPassword.val());
-                    signupArray[i].setAddress(signUpAddress.val());
+updateSignUpDetailsBtn.click(function () {
+    let cashierDetails = {
+        id: signUpId.val(),
+        name: signUpName.val(),
+        nic: signUpNic.val(),
+        contactNo: signUpContactNo.val(),
+        userName: signUpUserName.val(),
+        password: signUpPassword.val(),
+        address: signUpAddress.val()
+    }
 
-                    cashierDetailsTable.children('tbody > tr').filter(function() {
-                        if ($(this).children('td:nth-child(2)').text() == signupArray[i].getId()) {
-                            $(this).replaceWith('<tr><td>' + (i + 1) + '</td><td>' + signupArray[i].getId() + '</td><td>' + signupArray[i].getName() + '</td><td>' + signupArray[i].getNic() + '</td><td>' + signupArray[i].getContactNo() + '</td><td>' + signupArray[i].getUserName() + '</td><td>' + signupArray[i].getPassword() + '</td><td>' + signupArray[i].getAddress() + '</td></tr>');
-                        }
-                    })
-
-                    clearFieldsInSignup();
-                    let id = generateId();
-                    signUpId.val(id);
-                    setCashierInputBordersReset();
-                }
-            }
-        } else {
-            alert('Updating id ' + signUpId.val() + ' is unsuccessful');
-            clearFieldsInSignup();
-            let id = generateId();
-            signUpId.val(id);
+    if (confirm("Do you want to update this admin details. If yes please enter Ok button") == true) {
+        ifCashierExists();
+        if (checkIfCashierExists == false) {
+            alert('Cashier not exists');
+            clearFieldsInSignup()
+            generateId();
             setCashierInputBordersReset();
-            return;
+        } else {
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/cashier",
+                method: "PUT",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(cashierDetails),
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                    } else {
+                        alert(resp.data);
+                    }
+                },
+                error: function (ob, textstatus, error) {
+                    alert(error);
+                }
+            })
         }
     } else {
-        alert('Updating id ' + signUpId.val() + ' is unsuccessful');
-        clearFieldsInSignup();
-        let id = generateId();
-        signUpId.val(id);
+        alert('Updating signup details for signup Id ' + signUpId.val() + ' is unsuccessful.');
+        clearFieldsInSignup()
+        generateId();
         setCashierInputBordersReset();
-        return;
     }
 })
 
 deleteSignUpDetailsBtn.off('click');
-deleteSignUpDetailsBtn.click(function() {
-    let check = ifSignupDetailsExists();
-    if (check == true) {
-        if (confirm('Do you want to remove this signup details relevant to id = ' + signUpId.val() + '') == true) {
-            for (let i = 0; i < signupArray.length; i++) {
-                if (signupArray[i].getId() == signUpId.val()) {
-                    signupArray.splice(i, 1);
-
-                    cashierDetailsTable.children('tbody > tr').filter(function() {
-                        if ($(this).children('td:nth-child(2)').text() == signupArray[i].getId()) {
-                            $(this).remove();
-                        }
-                    })
-
-                    clearFieldsInSignup();
-                    let id = generateId();
-                    signUpId.val(id);
-                    setCashierInputBordersReset();
-                }
-            }
-        } else {
-            alert('Deleting id = ' + signUpId.val() + ' is unsuccessful');
-            clearFieldsInSignup();
-            let id = generateId();
-            signUpId.val(id);
+deleteSignUpDetailsBtn.click(function () {
+    if (confirm("Do you want to delete this admin. If yes please enter Ok button") == true) {
+        ifCashierExists();
+        if (checkIfCashierExists == false) {
+            alert('Cashier not exists');
+            clearFieldsInSignup()
+            generateId();
             setCashierInputBordersReset();
-            return;
+        } else {
+            console.log('delete method invoked with true cashier check')
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/cashier?cashierId=" + signUpId.val(),
+                method: "DELETE",
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                    } else {
+                        alert(resp.data);
+                    }
+                },
+                error: function (ob, textstatus, error) {
+                    alert(error);
+                }
+            })
         }
+    } else {
+        alert('Deleting signup details for signup Id ' + signUpId.val() + ' is unsuccessful.');
+        clearFieldsInSignup()
+        generateId();
+        setCashierInputBordersReset();
     }
 })
 
-function ifSignupDetailsExists() {
-    for (let i = 0; i < signupArray.length; i++) {
-        if (signupArray[i].getId() == signUpId.val()) {
-            return true;
-        }
-    }
-    return false;
-}
-
 function generateId() {
-    if (signupArray.length == 0) {
-        return "S-001";
-    } else {
-        for (let i = 0; i < signupArray.length; i++) {
-            if (i == (signupArray.length - 1)) {
-                let temp = parseInt(signupArray[i].getId().split('-')[1]);
-                temp = temp + 1;
-                if (temp <= 9) {
-                    return 'S-00' + temp;
-                } else if (temp <= 99) {
-                    return 'S-0' + temp;
-                } else {
-                    return 'S-' + temp;
-                }
+    console.log("Generate cashier id function")
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/cashier?option=generateCashierId",
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            if (resp.status == 200) {
+                console.log(resp.cashierId);
+                signUpId.val(resp.cashierId);
+            } else if (resp.status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
             }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
         }
-    }
+    })
 }
 
 function setDataToTheCashierTable() {
-    cashierDetailsTable.children('tbody').children('tr').remove();
-    for (let i = 0; i < signupArray.length; i++) {
-        cashierDetailsTable.children('tbody').append('<tr><td>' + (i + 1) + '</td><td>' + signupArray[i].getId() + '</td><td>' + signupArray[i].getName() + '</td><td>' + signupArray[i].getNic() + '</td><td>' + signupArray[i].getContactNo() + '</td><td>' + signupArray[i].getUserName() + '</td><td>' + signupArray[i].getPassword() + '</td><td>' + signupArray[i].getAddress() + '</td></tr>');
-    }
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/cashier?option=getAll",
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            if (resp.status == 200) {
+                let arr = resp;
+                cashierDetailsTable.children('tbody').children('tr').remove();
+                for (let i = 0; i < arr.length; i++) {
+                    cashierDetailsTable.children('tbody').append('<tr><td>' + (i + 1) + '</td><td>' + arr[i].id + '</td><td>' + arr[i].name + '</td><td>' + arr[i].nic + '</td><td>' + arr[i].contactNo + '</td><td>' + arr[i].userName + '</td><td>' + arr[i].password + '</td><td>' + arr[i].address + '</td></tr>');
+                }
+            } else if (resp.status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
+            }
+        }
+    })
 }
 
 function setBorderToDefault() {

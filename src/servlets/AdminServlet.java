@@ -197,6 +197,7 @@ public class AdminServlet extends HttpServlet {
                         JsonObject build = objectBuilder.build();
                         writer.print(build);
                     } else {
+                        objectBuilder.add("bool", exists);
                         objectBuilder.add("status", 400);
                         objectBuilder.add("data", "");
                         objectBuilder.add("message", "Invalid Input data");
@@ -280,12 +281,14 @@ public class AdminServlet extends HttpServlet {
                 objectBuilder.add("message", "Successfully Updated");
                 JsonObject build = objectBuilder.build();
                 writer.print(build);
+                dataSource.getConnection().close();
             } else {
                 objectBuilder.add("status", 400);
                 objectBuilder.add("data", "");
                 objectBuilder.add("message", "Input data is invalid");
                 JsonObject build = objectBuilder.build();
                 writer.print(build);
+                dataSource.getConnection().close();
             }
 
         } catch (SQLException throwables) {
@@ -297,11 +300,11 @@ public class AdminServlet extends HttpServlet {
             JsonObject build = objectBuilder.build();
             writer.print(build);
         }
-        try {
+        /*try {
             dataSource.getConnection().close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-        }
+        }*/
     }
 
     @Override
@@ -318,12 +321,14 @@ public class AdminServlet extends HttpServlet {
                 objectBuilder.add("message", "Successfully Deleted");
                 JsonObject build = objectBuilder.build();
                 writer.print(build);
+                dataSource.getConnection().close();
             } else {
                 objectBuilder.add("status", 400);
                 objectBuilder.add("data", "");
                 objectBuilder.add("message", "Invalid Id");
                 JsonObject build = objectBuilder.build();
                 writer.print(build);
+                dataSource.getConnection().close();
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();

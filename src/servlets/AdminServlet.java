@@ -224,7 +224,7 @@ public class AdminServlet extends HttpServlet {
                 try {
                     boolean exists = adminCashierLoginBO.ifAdminExists(dataSource, userName, password);
                     System.out.println("Login check = " + exists);
-                    if (exists == true) {
+                    if (exists) {
                         resp.setStatus(HttpServletResponse.SC_ACCEPTED);
                         objectBuilder.add("status", 200);
                         objectBuilder.add("data", "");

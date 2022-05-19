@@ -157,8 +157,16 @@ addAdminSignUpDetailsBtn.click(function () {
                         generateAdminId();
                     } else if (resp.status == 400) {
                         alert(resp.message);
+                        setDataToTheAdminTable();
+                        clearFieldsInAdminSignup();
+                        setAdminInputBordersReset();
+                        generateAdminId();
                     } else {
                         alert(resp.data);
+                        setDataToTheAdminTable();
+                        clearFieldsInAdminSignup();
+                        setAdminInputBordersReset();
+                        generateAdminId();
                     }
                 },
                 error: function (ob, textstatus, error) {
@@ -211,10 +219,18 @@ updateAdminSignUpDetailsBtn.click(function () {
                         alert(resp.message);
                     } else {
                         alert(resp.data);
+                        setDataToTheAdminTable();
+                        clearFieldsInAdminSignup();
+                        setAdminInputBordersReset();
+                        generateAdminId();
                     }
                 },
                 error: function (ob, textstatus, error) {
                     alert(error)
+                    setDataToTheAdminTable();
+                    clearFieldsInAdminSignup();
+                    setAdminInputBordersReset();
+                    generateAdminId();
                 }
             })
         }
@@ -248,12 +264,25 @@ deleteAdminSignUpDetailsBtn.click(function () {
                         generateAdminId();
                     } else if (resp.status == 400) {
                         alert(resp.message);
+                        setDataToTheAdminTable();
+                        clearFieldsInAdminSignup();
+                        setAdminInputBordersReset();
+                        generateAdminId();
+
                     } else {
                         alert(resp.data);
+                        setDataToTheAdminTable();
+                        clearFieldsInAdminSignup();
+                        setAdminInputBordersReset();
+                        generateAdminId();
                     }
                 },
                 error: function (ob, textstatus, error) {
                     alert(error)
+                    setDataToTheAdminTable();
+                    clearFieldsInAdminSignup();
+                    setAdminInputBordersReset();
+                    generateAdminId();
                 }
             })
         }

@@ -23,14 +23,16 @@ var itemsArray = [itemCodeInItems, itemDescriptionInItems, itemQtyInItems, itemB
 
 itemCodeInItems.val(generateItemCode());
 
+var checkIfItemExistsInItems;
+
 $('#itemCodeInItems,#itemDescriptionInItems,#itemQtyInItems,#itemBuyingPriceInItems,#itemUnitPriceInItems,#itemDiscountInItems').off('keydown');
-$('#itemCodeInItems,#itemDescriptionInItems,#itemQtyInItems,#itemBuyingPriceInItems,#itemUnitPriceInItems,#itemDiscountInItems').keydown(function(e) {
+$('#itemCodeInItems,#itemDescriptionInItems,#itemQtyInItems,#itemBuyingPriceInItems,#itemUnitPriceInItems,#itemDiscountInItems').keydown(function (e) {
     if (e.key == 'Tab') {
         e.preventDefault();
     }
 });
 
-itemCodeInItems.keyup(function(e) {
+itemCodeInItems.keyup(function (e) {
     let index = 0;
     var itemCodeLbl = $("#itemCodeLblInItems span");
     if (validate(itemCodePattern, itemsArray, index, e, saveItemBtn, updateItemBtn, deleteItemBtn) == true) {
@@ -40,7 +42,7 @@ itemCodeInItems.keyup(function(e) {
     }
 });
 
-itemDescriptionInItems.keyup(function(e) {
+itemDescriptionInItems.keyup(function (e) {
     let index = 1;
     let itemDescriptionLbl = $("#itemDescriptionLblInItems span");
     if (validate(itemDescriptionPattern, itemsArray, index, e, saveItemBtn, updateItemBtn, deleteItemBtn) == true) {
@@ -52,7 +54,7 @@ itemDescriptionInItems.keyup(function(e) {
     }
 })
 
-itemQtyInItems.keyup(function(e) {
+itemQtyInItems.keyup(function (e) {
     let index = 2;
     let itemQtyLbl = $("#itemQtyLblInItems span")
     if (validate(itemQtyPattern, itemsArray, index, e, saveItemBtn, updateItemBtn, deleteItemBtn) == true) {
@@ -63,7 +65,7 @@ itemQtyInItems.keyup(function(e) {
 
 })
 
-itemBuyingPriceInItems.keyup(function(e) {
+itemBuyingPriceInItems.keyup(function (e) {
     let index = 3;
     let itemBuyingPriceLbl = $("#itemBuyingPriceLblInItems span")
     if (validate(itemBuyingPattern, itemsArray, index, e, saveItemBtn, updateItemBtn, deleteItemBtn) == true) {
@@ -73,7 +75,7 @@ itemBuyingPriceInItems.keyup(function(e) {
     }
 })
 
-itemUnitPriceInItems.keyup(function(e) {
+itemUnitPriceInItems.keyup(function (e) {
     let index = 4;
     let itemUnitPriceLbl = $("#itemUnitPriceLblInItems span")
     if (validate(itemUnitPattern, itemsArray, index, e, saveItemBtn, updateItemBtn, deleteItemBtn) == true) {
@@ -83,7 +85,7 @@ itemUnitPriceInItems.keyup(function(e) {
     }
 })
 
-itemDiscountInItems.keyup(function(e) {
+itemDiscountInItems.keyup(function (e) {
     let index = 5;
     let itemDiscountLbl = $("#itemDiscountLblInItems span")
     if (validate(itemDiscountPattern, itemsArray, index, e, saveItemBtn, updateItemBtn, deleteItemBtn) == true) {
@@ -94,150 +96,232 @@ itemDiscountInItems.keyup(function(e) {
 })
 
 saveItemBtn.off('click');
-saveItemBtn.click(function() {
-    var discountInItems = 0;
+saveItemBtn.click(function () {
+    let discountInItems = 0;
     if (itemDiscountInItems.length == 0) {
         discountInItems = 0;
     } else {
         discountInItems = itemDiscountInItems.val();
     }
-
-    for (let i = 0; i < itemArray.length; i++) {
-        if (itemArray[i].getItemCode() == itemCodeInItems.val()) {
-            alert("This item id " + itemCodeInItems.val() + " already exists. Please try again with a different id");
-            clearFieldsInItems();
-            return;
-        }
+    let item = {
+        itemCode: itemCodeInItems.val(),
+        itemDescription: itemDescriptionInItems.val(),
+        itemQty: itemQtyInItems.val(),
+        itemBuyingPrice: itemBuyingPriceInItems.val(),
+        itemUnitPrice: itemUnitPriceInItems.val(),
+        itemDiscount: discountInItems
     }
 
-    if (confirm("Do you want to add this Item.. If yes please enter Ok button") == true) {
-        itemArray.push(new Item(itemCodeInItems.val(), itemDescriptionInItems.val(), itemQtyInItems.val(), itemBuyingPriceInItems.val(), itemUnitPriceInItems.val(), discountInItems));
-        setDatToTheItemTable();
-        deleteSelectedRowFromTheItemTable();
-        setDataToItemComboBox();
-        let code = generateItemCode();
-        itemCodeInItems.val(code);
-        setBorderToResetInItem();
-    } else {
-        alert('Item ' + itemCodeInItems.val() + ' adding is unsuccessful');
-        clearFieldsInItems();
-        let code = generateItemCode();
-        itemCodeInItems.val(code);
-        setBorderToResetInItem();
+    if (confirm("Do you want to save this item" == true)) {
+        checkIfItemExists();
+        if (checkIfItemExistsInItems == false) {
+            console.log(checkIfItemExistsInItems + " - check if item exists bool");
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/item",
+                method: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(item),
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        setDatToTheItemTable();
+                        setDataToItemComboBox();
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
+                    } else {
+                        alert(resp.data);
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
+                    }
+                },
+                error: function (db, textStatus, error) {
+                    alert(error)
+                    clearFieldsInItems();
+                    generateItemCode();
+                    setBorderToResetInItem();
+                }
+            })
+        } else {
+            clearFieldsInItems();
+            generateItemCode();
+            setBorderToResetInItem();
+        }
     }
 });
 
-function deleteSelectedRowFromTheItemTable() {
-    var tableRow = $(".ManageItems .container-fluid div:nth-child(3) div .table tbody tr");
-    tableRow.off("click")
-    tableRow.click(function() {
-        itemCodeInItems.val($(this).children("td:nth-child(2)").text());
-        itemDescriptionInItems.val($(this).children("td:nth-child(3)").text());
-        itemQtyInItems.val($(this).children("td:nth-child(4)").text());
-        itemBuyingPriceInItems.val($(this).children("td:nth-child(5)").text());
-        itemUnitPriceInItems.val($(this).children("td:nth-child(6)").text());
-        itemDiscountInItems.val($(this).children("td:nth-child(7)").text());
-    });
-    clearFieldsInItems();
-}
-
 function setDatToTheItemTable() {
-    $(".ManageItems .container-fluid div:nth-child(3) div table tbody tr").remove();
-    itemDetailsTable.children('tbody').children('tr').remove();
-    for (let i = 0; i < itemArray.length; i++) {
-        tBodyInItems.append("<tr><td>" + (i + 1) + "</td><td>" + itemArray[i].getItemCode() + "</td><td>" + itemArray[i].getItemDescription() + "</td><td>" + itemArray[i].getItemQty() + "</td><td>" + itemArray[i].getItemBuyingPrice() + "</td><td>" + itemArray[i].getItemUnitPrice() + "</td><td>" + itemArray[i].getItemDiscount() + "</td></tr>");
-        itemDetailsTable.children('tbody').append("<tr><td>" + (i + 1) + "</td><td>" + itemArray[i].getItemCode() + "</td><td>" + itemArray[i].getItemDescription() + "</td><td>" + itemArray[i].getItemQty() + "</td><td>" + itemArray[i].getItemBuyingPrice() + "</td><td>" + itemArray[i].getItemUnitPrice() + "</td><td>" + itemArray[i].getItemDiscount() + "</td></tr>");
-    }
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=getAll",
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            if (resp.status == 200) {
+                let arr = resp;
+                $(".ManageItems .container-fluid div:nth-child(3) div table tbody tr").remove();
+                itemDetailsTable.children('tbody').children('tr').remove();
+                for (let i = 0; i < arr.length; i++) {
+                    tBodyInItems.append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode() + "</td><td>" + arr[i].itemDescription() + "</td><td>" + arr[i].itemQty() + "</td><td>" + arr[i].itemBuyingPrice() + "</td><td>" + arr[i].itemUnitPrice() + "</td><td>" + arr[i].itemDiscount() + "</td></tr>");
+                    itemDetailsTable.children('tbody').append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode() + "</td><td>" + arr[i].itemDescription() + "</td><td>" + arr[i].itemQty() + "</td><td>" + arr[i].itemBuyingPrice() + "</td><td>" + arr[i].itemUnitPrice() + "</td><td>" + arr[i].itemDiscount() + "</td></tr>");
+                }
+            }
+        },
+        error: function (db, textStatus, error) {
+            alert(error)
+        }
+    })
 }
 
-itemCodeInItems.keydown(function(e) {
+itemCodeInItems.keydown(function (e) {
     if (e.key == 'Enter') {
         searchItemDetails();
     }
 })
 searchItemBtn.off('click')
-searchItemBtn.click(function() {
+searchItemBtn.click(function () {
     searchItemDetails();
 })
 
 function searchItemDetails() {
-    for (let i = 0; i < itemArray.length; i++) {
-        if (itemArray[i].getItemCode() == itemCodeInItems.val()) {
-            itemDescriptionInItems.val(itemArray[i].getItemDescription())
-            itemQtyInItems.val(itemArray[i].getItemQty())
-            itemBuyingPriceInItems.val(itemArray[i].getItemBuyingPrice())
-            itemUnitPriceInItems.val(itemArray[i].getItemUnitPrice())
-            itemDiscountInItems.val(itemArray[i].getItemDiscount())
+
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=searchItem&itemCode=" + itemCodeInItems.val(),
+        dataType: "json",
+        contentType: "application/json",
+        method: "GET",
+        success: function (resp) {
+            if (resp.status == 200) {
+                itemCodeInItems.val(resp.itemCode);
+                itemDescriptionInItems.val(resp.itemDescription);
+                itemQtyInItems.val(resp.itemQty);
+                itemBuyingPriceInItems.val(resp.itemBuyingPrice);
+                itemUnitPriceInItems.val(resp.itemUnitPrice);
+                itemDiscountInItems.val(resp.itemDiscount);
+            } else if (resp.status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
+            }
+        },
+        error: function (db, textStatus, error) {
+            alert(error)
         }
-    }
+    })
 }
 
 updateItemBtn.off('click');
-updateItemBtn.click(function() {
+updateItemBtn.click(function () {
 
-    if (confirm('Do you want to update ' + itemCodeInItems.val() + ' item...If yes please enter Ok button..') == true) {
-        for (let i = 0; i < itemArray.length; i++) {
-            if (itemArray[i].getItemCode() == itemCodeInItems.val()) {
-                itemArray[i].setItemDescription(itemDescriptionInItems.val());
-                itemArray[i].setItemQty(itemQtyInItems.val());
-                itemArray[i].setItemBuyingPrice(itemBuyingPriceInItems.val());
-                itemArray[i].setItemUnitPrice(itemUnitPriceInItems.val());
-                itemArray[i].setItemDiscount(itemDiscountInItems.val());
-
-                $(".ManageItems .container-fluid div:nth-child(3) div table tbody tr").filter(function() {
-                    if ($(this).children("td:nth-child(2)").text() == itemArray[i].getItemCode()) {
-                        $(this).replaceWith("<tr><td>" + (i + 1) + "</td><td>" + itemArray[i].getItemCode() + "</td><td>" + itemArray[i].getItemDescription() + "</td><td>" + itemArray[i].getItemQty() + "</td><td>" + itemArray[i].getItemBuyingPrice() + "</td><td>" + itemArray[i].getItemUnitPrice() + "</td><td>" + itemArray[i].getItemDiscount() + "</td></tr>");
+    let item = {
+        itemCode: itemCodeInItems.val(),
+        itemDescription: itemDescriptionInItems.val(),
+        itemQty: itemQtyInItems.val(),
+        itemBuyingPrice: itemBuyingPriceInItems.val(),
+        itemUnitPrice: itemUnitPriceInItems.val(),
+        itemDiscount: itemDiscountInItems.val()
+    }
+    if (confirm("Do you want to update this item") == true) {
+        checkIfItemExists()
+        if (checkIfItemExistsInItems == false) {
+            alert('This item code doesnt exists');
+            clearFieldsInItems();
+            generateItemCode();
+            setBorderToResetInItem();
+        } else {
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/item",
+                method: "PUT",
+                dataType: "json",
+                data: JSON.stringify(item),
+                contentType: "application/json",
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        setDatToTheItemTable();
+                        setDataToItemComboBox();
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
+                    } else {
+                        alert(resp.data);
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
                     }
-                })
-
-                itemDetailsTable.children('tbody').children('tr').filter(function() {
-                    if ($(this).children("td:nth-child(2)").text() == itemArray[i].getItemCode()) {
-                        $(this).replaceWith("<tr><td>" + (i + 1) + "</td><td>" + itemArray[i].getItemCode() + "</td><td>" + itemArray[i].getItemDescription() + "</td><td>" + itemArray[i].getItemQty() + "</td><td>" + itemArray[i].getItemBuyingPrice() + "</td><td>" + itemArray[i].getItemUnitPrice() + "</td><td>" + itemArray[i].getItemDiscount() + "</td></tr>");
-                    }
-                })
-                clearFieldsInItems();
-                let code = generateItemCode();
-                itemCodeInItems.val(code);
-                setBorderToResetInItem();
-            }
+                },
+                error: function (db, textStatus, error) {
+                    alert(error)
+                    clearFieldsInItems();
+                    generateItemCode();
+                    setBorderToResetInItem();
+                }
+            })
         }
-    } else {
-        alert('Updating ' + itemCodeInItems.val() + ' is unsuccessful');
-        clearFieldsInItems();
-        let code = generateItemCode();
-        itemCodeInItems.val(code);
-        setBorderToResetInItem();
     }
 });
 
 deleteItemBtn.off('click');
-deleteItemBtn.click(function() {
-    if (confirm('Do you want to delete ' + itemCodeInItems.val() + ' details... If yes please enter Ok button..') == true) {
-        for (let i = 0; i < itemArray.length; i++) {
-            if (itemArray[i].getItemCode() == itemCodeInItems.val()) {
-                itemArray.splice(i, 1);
-                $(".ManageItems .container-fluid div:nth-child(3) div table tbody tr").filter(function() {
-                    if ($(this).children("td:nth-child(2)").text() == itemArray[i].getItemCode()) {
-                        $(this).remove();
+deleteItemBtn.click(function () {
+    if (confirm("Do you want to delete this item") == true) {
+        checkIfItemExists();
+        if (checkIfItemExistsInItems == false) {
+            alert("This item is not exists");
+            clearFieldsInItems();
+            generateItemCode();
+            setBorderToResetInItem();
+        } else {
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/item?itemCode=" + itemCodeInItems.val(),
+                method: "DELETE",
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        setDatToTheItemTable();
+                        setDataToItemComboBox();
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                        setDatToTheItemTable();
+                        setDataToItemComboBox();
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
+                    } else {
+                        alert(resp.data);
+                        setDatToTheItemTable();
+                        setDataToItemComboBox();
+                        clearFieldsInItems();
+                        generateItemCode();
+                        setBorderToResetInItem();
                     }
-                })
-
-                itemDetailsTable.children('tbody').children('tr').filter(function() {
-                    if ($(this).children("td:nth-child(2)").text() == itemArray[i].getItemCode()) {
-                        $(this).remove();
-                    }
-                })
-                clearFieldsInItems();
-                let code = generateItemCode();
-                itemCodeInItems.val(code);
-                setBorderToResetInItem();
-            }
+                },
+                error: function (ob, textStatus, error) {
+                    alert(error);
+                    setDatToTheItemTable();
+                    clearFieldsInItems();
+                    generateItemCode();
+                    setBorderToResetInItem();
+                }
+            })
         }
     } else {
-        alert('Deleting ' + itemCodeInItems.val() + ' item is unsuccessful');
+        alert("Deleting this item is unsuccessfull");
         clearFieldsInItems();
-        let code = generateItemCode();
-        itemCodeInItems.val(code);
+        generateItemCode();
         setBorderToResetInItem();
     }
 })
@@ -252,25 +336,48 @@ function clearFieldsInItems() {
 }
 
 function generateItemCode() {
-    if (itemArray[0] != undefined) {
-        for (let i = 0; i < itemArray.length; i++) {
-            if (i == (itemArray.length - 1)) {
-                let temp = parseInt(itemArray[i].getItemCode().split('-')[1]);
-                temp = temp + 1;
-                if (temp <= 9) {
-                    return "I-00" + temp;
-                } else if (temp <= 99) {
-                    return "I-0" + temp;
-                } else {
-                    return "I-" + temp;
-                }
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=generateItemCode",
+        method: "GET",
+        success: function (resp) {
+            if (resp.status == 200) {
+                itemCodeInItems.val(resp.itemCode);
+            } else if (status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
             }
+        },
+        error: function (db, textStatus, error) {
+            alert(error);
         }
-    } else {
-        return 'I-001';
-    }
+    })
 }
 
 function setBorderToResetInItem() {
     setBorderToDefault(itemsArray);
+}
+
+function setBoolToVariableCheck(bool) {
+    checkIfItemExistsInItems = bool;
+}
+
+function checkIfItemExists() {
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=ifItemExists&itemCode=" + itemCodeInItems.val(),
+        method: "GET",
+        success: function (resp) {
+            if (resp.status == 200) {
+                setBoolToVariableCheck(resp.bool);
+            } else if (status == 400) {
+                setBoolToVariableCheck(resp.bool);
+                alert(resp.message);
+            } else {
+                alert(resp.data);
+            }
+        },
+        error: function (db, textStatus, error) {
+            alert(error);
+        }
+    })
 }

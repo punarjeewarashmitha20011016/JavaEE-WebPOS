@@ -1,1 +1,0 @@
-var signupArray = new Array();

@@ -157,10 +157,11 @@ public class CashierServlet extends HttpServlet {
             case "loginCheck":
                 String userName = req.getParameter("cashierUserName");
                 String password = req.getParameter("cashierPassword");
+                System.out.println("Cashier UserName - " + userName + " = Cashier Password - " + password);
                 try {
-                    boolean exists = adminCashierLoginBO.ifAdminExists(dataSource, userName, password);
+                    boolean exists = adminCashierLoginBO.ifCashierExists(dataSource, userName, password);
                     System.out.println("Login check = " + exists);
-                    if (exists == true) {
+                    if (exists) {
                         resp.setStatus(HttpServletResponse.SC_ACCEPTED);
                         objectBuilder.add("status", 200);
                         objectBuilder.add("data", "");

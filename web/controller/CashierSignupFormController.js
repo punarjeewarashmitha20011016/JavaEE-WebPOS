@@ -52,7 +52,7 @@ signUpId.keyup(function (e) {
             searchSignupDetails();
         }
     } else {
-        signUpIdLbl.text('Please enter a valid Id. Hint (S-001)');
+        signUpIdLbl.text('Please enter a valid Id. Hint (C-001)');
         signUpIdLbl.css('font-size', '80%');
     }
 })
@@ -186,12 +186,24 @@ addSignUpDetailsBtn.click(function () {
                         setCashierInputBordersReset();
                     } else if (resp.status == 400) {
                         alert(resp.message);
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
                     } else {
                         alert(resp.data);
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
                     }
                 },
                 error: function (ob, textstatus, error) {
                     alert(error);
+                    setDataToTheCashierTable();
+                    clearFieldsInSignup();
+                    generateId();
+                    setCashierInputBordersReset();
                 }
             })
         }
@@ -274,12 +286,24 @@ updateSignUpDetailsBtn.click(function () {
                         setCashierInputBordersReset();
                     } else if (resp.status == 400) {
                         alert(resp.message);
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
                     } else {
                         alert(resp.data);
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
                     }
                 },
                 error: function (ob, textstatus, error) {
                     alert(error);
+                    setDataToTheCashierTable();
+                    clearFieldsInSignup();
+                    generateId();
+                    setCashierInputBordersReset();
                 }
             })
         }
@@ -313,12 +337,24 @@ deleteSignUpDetailsBtn.click(function () {
                         setCashierInputBordersReset();
                     } else if (resp.status == 400) {
                         alert(resp.message);
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
                     } else {
                         alert(resp.data);
+                        setDataToTheCashierTable();
+                        clearFieldsInSignup();
+                        generateId();
+                        setCashierInputBordersReset();
                     }
                 },
                 error: function (ob, textstatus, error) {
                     alert(error);
+                    setDataToTheCashierTable();
+                    clearFieldsInSignup();
+                    generateId();
+                    setCashierInputBordersReset();
                 }
             })
         }

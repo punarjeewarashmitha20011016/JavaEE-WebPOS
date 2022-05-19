@@ -1,6 +1,7 @@
 package servlets;
 
 import bo.BoFactory;
+import bo.custom.AdminCashierLoginBO;
 import bo.custom.CashierFormSignUpBO;
 import dto.CashierDTO;
 
@@ -23,6 +24,7 @@ public class CashierServlet extends HttpServlet {
     DataSource dataSource;
 
     private CashierFormSignUpBO cashierFormSignUpBO = (CashierFormSignUpBO) BoFactory.getBoFactory().getBoTypes(BoFactory.BoTypes.cashierFormSignUp);
+    private AdminCashierLoginBO adminCashierLoginBO = (AdminCashierLoginBO) BoFactory.getBoFactory().getBoTypes(BoFactory.BoTypes.AdminCashierLogin);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -150,6 +152,36 @@ public class CashierServlet extends HttpServlet {
                     objectBuilder.add("data", throwables.getLocalizedMessage());
                     objectBuilder.add("message", "Error");
                     writer.print(objectBuilder.build());
+                }
+                break;
+            case "loginCheck":
+                String userName = req.getParameter("cashierUserName");
+                String password = req.getParameter("cashierPassword");
+                try {
+                    boolean exists = adminCashierLoginBO.ifAdminExists(dataSource, userName, password);
+                    System.out.println("Login check = " + exists);
+                    if (exists == true) {
+                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        objectBuilder.add("status", 200);
+                        objectBuilder.add("data", "");
+                        objectBuilder.add("message", "Login Successful");
+                        JsonObject build = objectBuilder.build();
+                        writer.print(build);
+                    } else {
+                        objectBuilder.add("status", 400);
+                        objectBuilder.add("data", "");
+                        objectBuilder.add("message", "Login Credentials are not valid");
+                        JsonObject build = objectBuilder.build();
+                        writer.print(build);
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                    resp.setStatus(200);
+                    objectBuilder.add("status", 500);
+                    objectBuilder.add("data", throwables.getLocalizedMessage());
+                    objectBuilder.add("message", "Error");
+                    JsonObject build = objectBuilder.build();
+                    writer.print(build);
                 }
                 break;
             default:

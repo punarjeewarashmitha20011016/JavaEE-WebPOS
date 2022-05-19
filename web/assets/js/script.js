@@ -138,7 +138,7 @@ loginBtn.click(function () {
 
 function cashierLogin() {
     $.ajax({
-            url: "http://localhost:8080/WebPosEE/cashier?option=loginCheck&cashierUserName=" + userNameLoginId.val() + "&adminPassword=" + passwordLoginId.val(),
+            url: "http://localhost:8080/WebPosEE/cashier?option=loginCheck&cashierUserName=" + userNameLoginId.val() + "&cashierPassword=" + passwordLoginId.val(),
             method: "GET",
             dataType: "json",
             contentType: "application/json",

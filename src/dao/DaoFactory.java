@@ -1,9 +1,6 @@
 package dao;
 
-import dao.custom.impl.AdminDaoImpl;
-import dao.custom.impl.CashierDaoImpl;
-import dao.custom.impl.CustomerDaoImpl;
-import dao.custom.impl.ItemDaoImpl;
+import dao.custom.impl.*;
 
 public class DaoFactory {
     private static DaoFactory daoFactory;
@@ -29,12 +26,16 @@ public class DaoFactory {
                 return new ItemDaoImpl();
             case Customer:
                 return new CustomerDaoImpl();
+            case OrderDetails:
+                return new OrderDetailsDaoImpl();
+            case Order:
+                return new OrderDaoImpl();
             default:
                 return null;
         }
     }
 
     public enum DaoTypes {
-        Admin, Cashier, Item, Customer
+        Admin, Cashier, Item, Customer, Order, OrderDetails
     }
 }

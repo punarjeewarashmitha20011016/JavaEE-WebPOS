@@ -41,7 +41,7 @@ var orderId = undefined;
 orderId = getOrderId();
 
 $('#customerIdHome,#customerNameHome,#customerAddressHome,#customerTelHome,#itemCodeHome,#itemDescriptionHome,#itemQtyHome,#itemUnitPriceHome,#itemQtyOnHandHome,#itemDiscountHome').off('keydown');
-$('#customerIdHome,#customerNameHome,#customerAddressHome,#customerTelHome,#itemCodeHome,#itemDescriptionHome,#itemQtyHome,#itemUnitPriceHome,#itemQtyOnHandHome,#itemDiscountHome').keydown(function(e) {
+$('#customerIdHome,#customerNameHome,#customerAddressHome,#customerTelHome,#itemCodeHome,#itemDescriptionHome,#itemQtyHome,#itemUnitPriceHome,#itemQtyOnHandHome,#itemDiscountHome').keydown(function (e) {
     if (e.key == 'Tab') {
         e.preventDefault();
     }
@@ -62,7 +62,7 @@ orderTotal.prop("disabled", true);
 
 var itemCodeInHome;
 
-cusIdHome.keyup(function(e) {
+cusIdHome.keyup(function (e) {
     let index = 0;
     if (validate(cusIdPattern, placeOrderTextFieldsToValidate, index, e, addToCartBtn, purchaseBtn, discardBtn) == true) {
         for (let i = 0; i < customerArray.length; i++) {
@@ -78,7 +78,7 @@ cusIdHome.keyup(function(e) {
     }
 });
 
-itemQtyOnHandHome.keyup(function(e) {
+itemQtyOnHandHome.keyup(function (e) {
     let qtyOnHandLbl = $('#qtyOnHandLbl');
     let index = 1;
     if (validate(qtyOnHandPattern, placeOrderTextFieldsToValidate, index, e, addToCartBtn, purchaseBtn, discardBtn) == true) {
@@ -89,7 +89,7 @@ itemQtyOnHandHome.keyup(function(e) {
 });
 
 itemCodeHome.off('click')
-itemCodeHome.click(function() {
+itemCodeHome.click(function () {
     for (let i = 0; i < itemArray.length; i++) {
         let checkItemCodeInCombo = itemCodeHome.children('option:selected').text();
         if (itemArray[i].getItemCode() == checkItemCodeInCombo) {
@@ -113,166 +113,177 @@ function setDataToItemComboBox() {
 }
 
 function getOrderId() {
-    if (orderId != undefined) {
-        for (let i = 0; i < orderArray.length; i++) {
-            if (i == (orderArray.length - 1)) {
-                let temp = parseInt(orderArray[i].getOrderId().split("-")[1]);
-                temp = temp + 1;
-                if (temp <= 9) {
-                    orderId = 'O-00' + temp;
-                    orderIdHome.val(orderId);
-                    return orderId;
-                } else if (temp <= 99) {
-                    orderId = 'O-0' + temp;
-                    orderIdHome.val(orderId);
-                    return orderId;
-                } else {
-                    orderId = 'O-' + temp;
-                    orderIdHome.val(orderId);
-                    return orderId;
-                }
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/order?option=generateOrderId",
+        method: "GET",
+        success: function (resp) {
+            if (resp.status == 200) {
+                orderIdHome.val(resp.orderId);
+            } else if (resp.status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
             }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error)
         }
-    } else {
-        orderId = "O-001";
-        orderIdHome.val(orderId);
-        return orderId;
-    }
+    })
 }
 
 var addToCartList = new Array();
 addToCartBtn.off('click')
-addToCartBtn.click(function() {
-    let tbody = $("#addToCartTable > tbody");
-    let discountInAddToCart = undefined;
-    if (itemDiscountHome.val() === "") {
-        discountInAddToCart = 0;
-        itemDiscountHome.val(discountInAddToCart);
-    }
-    let totalItemAmount = calculateSingleItemPrice(itemCodeInHome, itemQtyOnHandHome.val());
-
-    if (ifItemIsExistsInCart(itemCodeInHome) == true) {
-        for (let i = 0; i < addToCartList.length; i++) {
-            if (addToCartList[i].getItemCode() == itemCodeInHome) {
-                let itemAddToCartQty = parseInt(addToCartList[i].getItemQty());
-                let increasedQty = itemAddToCartQty + parseInt(itemQtyOnHandHome.val());
-                let totalAmount = parseFloat(addToCartList[i].getTotalAmount());
-                let calcIncreasedAmount = parseInt(itemQtyOnHandHome.val()) * parseFloat(itemUnitPriceHome.val());
-                let increasedAmount = totalAmount + calcIncreasedAmount;
-                console.log("increasedAmount" + increasedAmount);
-                addToCartList[i].setItemQty(increasedQty);
-                addToCartList[i].setItemTotalAmount(increasedAmount);
-
-                $("#addToCartTable > tbody tr").filter(function() {
-                    if ($(this).children("td:nth-child(3)").text() == addToCartList[i].getItemCode()) {
-                        $(this).replaceWith("<tr><td>" + (i + 1) + "</td><td>" + addToCartList[i].getCustomerId() + "</td><td>" + addToCartList[i].getItemCode() + "</td><td>" + addToCartList[i].getItemDescription() + "</td><td>" + addToCartList[i].getItemQty() + "</td><td>" + addToCartList[i].getItemPrice() + "</td><td>" + addToCartList[i].getItemDiscount() + "</td><td>" + addToCartList[i].getTotalAmount() + "</td></tr>");
-                    }
-                })
-            }
+addToCartBtn.click(function () {
+        let tbody = $("#addToCartTable > tbody");
+        let discountInAddToCart = undefined;
+        if (itemDiscountHome.val() === "") {
+            discountInAddToCart = 0;
+            itemDiscountHome.val(discountInAddToCart);
         }
+        let totalItemAmount = calculateSingleItemPrice(itemCodeInHome, itemQtyOnHandHome.val());
 
-    } else {
-        let checkItemCodeInCombo = itemCodeHome.children('option:selected').text();
-        addToCartList.push(new AddToCart(cusIdHome.val(), checkItemCodeInCombo, itemDescriptionHome.val(), itemQtyOnHandHome.val(), itemUnitPriceHome.val(), itemDiscountHome.val(), totalItemAmount));
-        let row = (`<tr><td>${rowNoCart}</td><td>${cusIdHome.val()}</td><td>${itemCodeInHome}</td><td>${itemDescriptionHome.val()}</td><td>${itemQtyOnHandHome.val()}</td><td>${itemUnitPriceHome.val()}</td><td>${itemDiscountHome.val()}</td><td>${totalItemAmount}</td></tr>`)
-        tbody.append(row);
-        rowNoCart++;
-    }
+        if (ifItemIsExistsInCart(itemCodeInHome) == true) {
+            for (let i = 0; i < addToCartList.length; i++) {
+                if (addToCartList[i].getItemCode() == itemCodeInHome) {
+                    let itemAddToCartQty = parseInt(addToCartList[i].getItemQty());
+                    let increasedQty = itemAddToCartQty + parseInt(itemQtyOnHandHome.val());
+                    let totalAmount = parseFloat(addToCartList[i].getTotalAmount());
+                    let calcIncreasedAmount = parseInt(itemQtyOnHandHome.val()) * parseFloat(itemUnitPriceHome.val());
+                    let increasedAmount = totalAmount + calcIncreasedAmount;
+                    console.log("increasedAmount" + increasedAmount);
+                    addToCartList[i].setItemQty(increasedQty);
+                    addToCartList[i].setItemTotalAmount(increasedAmount);
 
-    let totalArr = $("#addToCartTable tbody tr").children("td:nth-child(8)");
-    var subtotal = 0.0;
-    for (let index = 0; index < totalArr.length; index++) {
-        subtotal += parseFloat(totalArr.eq(index).text());
-        console.log("Sub total" + subtotal)
-    }
-    orderSubTotal.val(subtotal);
-
-    let orderDisc = 0;
-    orderDiscount.off("keydown")
-    orderDiscount.keydown(function(e) {
-        if (e.key === 'Enter') {
-            orderDisc = ((parseFloat(orderDiscount.val()) / 100) * subtotal);
-            orderTotal.val(subtotal - orderDisc);
-
-            orderCashReceived.keydown(function(e) {
-                if (e.key === 'Enter') {
-                    orderCashBalance.val(parseFloat(orderCashReceived.val()) - parseFloat(orderTotal.val()));
-                }
-            });
-        }
-    })
-    console.log("Order Discount : " + orderDisc)
-    if (orderDiscount.val() == "") {
-        orderDisc = 0;
-    }
-    orderTotal.val(subtotal - orderDisc);
-
-    orderCashReceived.keydown(function(e) {
-        if (e.key === 'Enter') {
-            orderCashBalance.val(parseFloat(orderCashReceived.val()) - parseFloat(orderTotal.val()));
-        }
-    });
-
-    let dt = new Date();
-    let date = dt.getDate() + "." + (dt.getMonth() + 1) + "." + dt.getFullYear();
-    let time = dt.getHours() + "." + dt.getMinutes() + "." + dt.getSeconds();
-
-    var order = new Order(orderId, cusIdHome.val(), date, time, orderDiscount.val(), orderTotal.val());
-
-    if (order != null) {
-        console.log("Not null")
-        purchaseBtn.off('click');
-        purchaseBtn.click(function() {
-
-            for (let check = 0; check < orderArray.length; check++) {
-                if (orderArray[check].getOrderId() == orderIdHome.val()) {
-                    alert('This order Id already exists.. Please try again with a different Id');
-                    return;
-                }
-            }
-
-            if (confirm('Do you want to place this order = ' + orderIdHome.val() + ' .. If yes please enter Ok button...') == true) {
-                orderArray.push(order);
-                for (let i = 0; i < addToCartList.length; i++) {
-                    for (let j = 0; j < orderArray.length; j++)
-                        if (orderId == orderArray[j].getOrderId()) {
-                            orderArray[j].getOrderDetails().push(new OrderDetails(orderId, addToCartList[i].getItemCode(), addToCartList[i].getItemDescription(), addToCartList[i].getItemQty(), addToCartList[i].getItemPrice(), addToCartList[i].getItemDiscount(), addToCartList[i].getTotalAmount()));
+                    $("#addToCartTable > tbody tr").filter(function () {
+                        if ($(this).children("td:nth-child(3)").text() == addToCartList[i].getItemCode()) {
+                            $(this).replaceWith("<tr><td>" + (i + 1) + "</td><td>" + addToCartList[i].getCustomerId() + "</td><td>" + addToCartList[i].getItemCode() + "</td><td>" + addToCartList[i].getItemDescription() + "</td><td>" + addToCartList[i].getItemQty() + "</td><td>" + addToCartList[i].getItemPrice() + "</td><td>" + addToCartList[i].getItemDiscount() + "</td><td>" + addToCartList[i].getTotalAmount() + "</td></tr>");
                         }
+                    })
                 }
+            }
 
-                deducatQuantityOfItemsOfPurchased(addToCartList)
-                clearFieldsInHomeAfterPurchase();
-                orderId = getOrderId();
-                orderIdHome.val(orderId);
-                setDatToTheItemTable();
-                clearCart()
-                setDataToOrderTable();
-                setPlaceOrderFormBordersReset();
-            } else {
-                alert('Placing order = ' + orderIdHome.val() + ' is unsuccessful');
-                clearFieldsInHomeAfterPurchase();
-                setPlaceOrderFormBordersReset();
+        } else {
+            let checkItemCodeInCombo = itemCodeHome.children('option:selected').text();
+            addToCartList.push(new AddToCart(cusIdHome.val(), checkItemCodeInCombo, itemDescriptionHome.val(), itemQtyOnHandHome.val(), itemUnitPriceHome.val(), itemDiscountHome.val(), totalItemAmount));
+            let row = (`<tr><td>${rowNoCart}</td><td>${cusIdHome.val()}</td><td>${itemCodeInHome}</td><td>${itemDescriptionHome.val()}</td><td>${itemQtyOnHandHome.val()}</td><td>${itemUnitPriceHome.val()}</td><td>${itemDiscountHome.val()}</td><td>${totalItemAmount}</td></tr>`)
+            tbody.append(row);
+            rowNoCart++;
+        }
+
+        let totalArr = $("#addToCartTable tbody tr").children("td:nth-child(8)");
+        var subtotal = 0.0;
+        for (let index = 0; index < totalArr.length; index++) {
+            subtotal += parseFloat(totalArr.eq(index).text());
+            console.log("Sub total" + subtotal)
+        }
+        orderSubTotal.val(subtotal);
+
+        let orderDisc = 0;
+        orderDiscount.off("keydown")
+        orderDiscount.keydown(function (e) {
+            if (e.key === 'Enter') {
+                orderDisc = ((parseFloat(orderDiscount.val()) / 100) * subtotal);
+                orderTotal.val(subtotal - orderDisc);
+
+                orderCashReceived.keydown(function (e) {
+                    if (e.key === 'Enter') {
+                        orderCashBalance.val(parseFloat(orderCashReceived.val()) - parseFloat(orderTotal.val()));
+                    }
+                });
+            }
+        })
+        console.log("Order Discount : " + orderDisc)
+        if (orderDiscount.val() == "") {
+            orderDisc = 0;
+        }
+        orderTotal.val(subtotal - orderDisc);
+
+        orderCashReceived.keydown(function (e) {
+            if (e.key === 'Enter') {
+                orderCashBalance.val(parseFloat(orderCashReceived.val()) - parseFloat(orderTotal.val()));
             }
         });
-    } else {
-        return;
-    }
 
-    clearSelectedRowFromTheCart();
-    discardOrder();
-});
+        let dt = new Date();
+        let date = dt.getDate() + "." + (dt.getMonth() + 1) + "." + dt.getFullYear();
+        let time = dt.getHours() + "." + dt.getMinutes() + "." + dt.getSeconds();
+
+        /*============================*/
+
+        var orderDetailsArr = new Array();
+        for (let i = 0; i < addToCartList.length; i++) {
+            let arr = {
+                orderId: orderId,
+                itemCode: addToCartList[i].getItemCode(),
+                itemDescription: addToCartList[i].getItemDescription(),
+                itemQty: addToCartList[i].getItemQty(),
+                itemPrice: addToCartList[i].getItemPrice(),
+                itemDiscount: addToCartList[i].getItemDiscount(),
+                itemTotal: addToCartList[i].getTotalAmount()
+            }
+            orderDetailsArr.push(arr);
+        }
+        var order = {
+            orderId: orderId,
+            customerId: cusIdHome.val(),
+            orderDate: date,
+            orderTime: time,
+            orderDiscount: orderDiscount.val(),
+            orderTotal: orderTotal.val(),
+            orderDetails: orderDetailsArr
+        }
+
+        if (confirm("Do you want to place this order") == true) {
+            $.ajax({
+                url: "http://localhost:8080/WebPosEE/order",
+                method: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(order),
+                success: function (resp) {
+                    if (resp.status == 200) {
+                        deducatQuantityOfItemsOfPurchased(addToCartList)
+                        clearFieldsInHomeAfterPurchase();
+                        getOrderId();
+                        setDatToTheItemTable();
+                        clearCart()
+                        setDataToOrderTable();
+                        setPlaceOrderFormBordersReset();
+                    } else if (resp.status == 400) {
+                        alert(resp.message);
+                        clearFieldsInHomeAfterPurchase();
+                        setPlaceOrderFormBordersReset();
+                    } else {
+                        alert(resp.data);
+                        clearFieldsInHomeAfterPurchase();
+                        setPlaceOrderFormBordersReset();
+                    }
+                },
+                error: function (ob, textStatus, error) {
+                    alert(error)
+                    clearFieldsInHomeAfterPurchase();
+                    setPlaceOrderFormBordersReset();
+                }
+            })
+        } else {
+            return;
+        }
+        clearSelectedRowFromTheCart();
+        discardOrder();
+    }
+)
 
 function clearSelectedRowFromTheCart() {
     let addToCartTbody = $('#addToCartTable > tbody');
     let tr = $('#addToCartTable > tbody > tr');
     tr.off('click');
-    tr.click(function() {
+    tr.click(function () {
         clearCartBtn.prop('disabled', false);
         let trItemCode = $(this).children('td:nth-child(3)').text();
         for (let i = 0; i < addToCartList.length; i++) {
             if (addToCartList[i].getItemCode() == trItemCode) {
                 clearCartBtn.off('click');
-                clearCartBtn.click(function() {
+                clearCartBtn.click(function () {
                     addToCartList.splice(i, 1);
                     addToCartTbody.children('tr').eq(i).remove();
                 })
@@ -399,7 +410,7 @@ function disableAllBtns() {
 
 function discardOrder() {
     discardBtn.off('click');
-    discardBtn.click(function() {
+    discardBtn.click(function () {
         clearCart();
         let addToCartTbody = $('#addToCartTable > tbody');
         for (let i = 0; i < addToCartList.length; i++) {

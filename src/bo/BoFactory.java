@@ -24,12 +24,14 @@ public class BoFactory {
                 return new ItemFormBOImpl();
             case CustomerForm:
                 return new CustomerFormBOImpl();
+            case PlaceOrder:
+                return new PlaceOrderBoImpl();
             default:
                 return null;
         }
     }
 
     public enum BoTypes {
-        AdminFormSignUp, AdminCashierLogin, cashierFormSignUp, ItemForm, CustomerForm
+        AdminFormSignUp, AdminCashierLogin, cashierFormSignUp, ItemForm, CustomerForm, PlaceOrder
     }
 }

@@ -131,6 +131,8 @@ function getOrderId() {
     })
 }
 
+var returnTotal;
+
 var addToCartList = new Array();
 addToCartBtn.off('click')
 addToCartBtn.click(function () {
@@ -140,7 +142,8 @@ addToCartBtn.click(function () {
             discountInAddToCart = 0;
             itemDiscountHome.val(discountInAddToCart);
         }
-        let totalItemAmount = calculateSingleItemPrice(itemCodeInHome, itemQtyOnHandHome.val());
+        calculateSingleItemPrice(itemCodeInHome, itemQtyOnHandHome.val());
+        let totalItemAmount = returnTotal;
 
         if (ifItemIsExistsInCart(itemCodeInHome) == true) {
             for (let i = 0; i < addToCartList.length; i++) {
@@ -308,18 +311,51 @@ function ifItemIsExistsInCart(itemCode) {
 }
 
 function ifDiscountIsExistsForAnItem(itemCode) {
-    let check = undefined;
-    for (let i = 0; i < itemArray.length; i++) {
-        if (itemArray[i].getItemCode() == itemCode) {
-            if (itemArray[i].getItemDiscount() != 0) {
-                check = true;
-                return check;
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=getAll",
+        dataType: "json",
+        contentType: "application/json",
+        method: "GET",
+        success: function (resp) {
+            if (resp.status == 200) {
+                $.ajax({
+                    url: "http://localhost:8080/WebPosEE/item?option=getAll",
+                    dataType: "json",
+                    contentType: "application/json",
+                    method: "GET",
+                    success: function (resp) {
+                        let itemArray = resp;
+                        let check = undefined;
+                        for (let i = 0; i < itemArray.length; i++) {
+                            if (itemArray[i].itemCode == itemCode) {
+                                if (itemArray[i].itemDiscount != 0) {
+                                    check = true;
+                                    returnIfDiscountIsExistsForAnItemFunction(check);
+                                } else {
+                                    check = false;
+                                    returnIfDiscountIsExistsForAnItemFunction(check);
+                                }
+                            }
+                        }
+                    },
+                    error: function (ob, textStatus, error) {
+                        alert(error);
+                    }
+                });
+            } else if (resp.status == 400) {
+                alert(resp.message);
             } else {
-                check = false;
-                return check;
+                alert(resp.data);
             }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
         }
-    }
+    });
+}
+
+function returnIfDiscountIsExistsForAnItemFunction(bool) {
+    returnIfDiscountIsExistsForAnItem = bool;
 }
 
 function checkIfAddToCartListHasExistingItem(itemCode) {
@@ -331,44 +367,65 @@ function checkIfAddToCartListHasExistingItem(itemCode) {
     return -1;
 }
 
+var returnIfDiscountIsExistsForAnItem;
+
 function calculateSingleItemPrice(itemCode, qtyOnHand) {
-    let ifDiscountAddedForAnExistingAddedItem = ifDiscountIsExistsForAnItem(itemCode);
-    let discount = undefined;
-    let total = undefined;
-    let qtyOnHandOnCalc = parseInt(qtyOnHand);
-    for (let i = 0; i < itemArray.length; i++) {
-        if (itemArray[i].getItemCode() == itemCode) {
-            let unitPrice = parseFloat(itemArray[i].getItemUnitPrice());
-            let indexOfItemCodeExistsInAddToCart = checkIfAddToCartListHasExistingItem(itemCode);
-            if (indexOfItemCodeExistsInAddToCart == -1) {
-                if (ifDiscountAddedForAnExistingAddedItem == true) {
-                    for (let j = 0; j < itemArray.length; j++) {
-                        if (itemArray[i].getItemCode() == itemCode) {
-                            let discountInPercentageForGivenItemCode = parseFloat(itemArray[i].getItemDiscount());
-                            let itemUnitPriceForItemCode = parseFloat(itemArray[i].getItemUnitPrice());
-                            let discountedPrice = (discountInPercentageForGivenItemCode / 100) * (parseFloat(itemUnitPriceForItemCode * qtyOnHandOnCalc));
-                            total = itemUnitPriceForItemCode - discountedPrice;
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=getAll",
+        dataType: "json",
+        contentType: "application/json",
+        method: "GET",
+        success: function (resp) {
+            ifDiscountIsExistsForAnItem(itemCode);
+            let ifDiscountAddedForAnExistingAddedItem = returnIfDiscountIsExistsForAnItem;
+            let discount = undefined;
+            let total = undefined;
+            let qtyOnHandOnCalc = parseInt(qtyOnHand);
+            if (resp.status == 200) {
+                let itemArray = resp;
+                for (let i = 0; i < itemArray.length; i++) {
+                    if (itemArray[i].itemCode == itemCode) {
+                        let unitPrice = parseFloat(itemArray[i].itemUnitPrice);
+                        let indexOfItemCodeExistsInAddToCart = checkIfAddToCartListHasExistingItem(itemCode);
+                        if (indexOfItemCodeExistsInAddToCart == -1) {
+                            if (ifDiscountAddedForAnExistingAddedItem == true) {
+                                for (let j = 0; j < itemArray.length; j++) {
+                                    if (itemArray[i].itemCode == itemCode) {
+                                        let discountInPercentageForGivenItemCode = parseFloat(itemArray[i].itemDiscount);
+                                        let itemUnitPriceForItemCode = parseFloat(itemArray[i].itemUnitPrice);
+                                        let discountedPrice = (discountInPercentageForGivenItemCode / 100) * (parseFloat(itemUnitPriceForItemCode * qtyOnHandOnCalc));
+                                        total = itemUnitPriceForItemCode - discountedPrice;
+                                    }
+                                }
+                                returnTotalFunction(total);
+                            } else {
+                                total = unitPrice * qtyOnHandOnCalc;
+                                returnTotalFunction(total);
+                            }
+                        } else {
+                            for (let j = 0; j < addToCartList.length; j++) {
+                                if (addToCartList[i].getItemCode() == itemCode) {
+                                    let alreadyAddedDiscountedPrice = parseFloat(addToCartList[i].getTotalAmount());
+                                    let discountedPrice = (discount / 100) * (parseFloat(addToCartList[i].getItemPrice() * (parseInt(addToCartList[i].getItemQty()))));
+                                    let removedDiscountOfPreviouslyAdded = alreadyAddedDiscountedPrice + discountedPrice
+                                    let reCalculatedDiscount = (discount / 100) * (removedDiscountOfPreviouslyAdded * qtyOnHandOnCalc);
+                                    total = itemArray[i].getItemUnitPrice() - reCalculatedDiscount;
+                                }
+                            }
+                            returnTotalFunction(total);
                         }
                     }
-                    return total;
-                } else {
-                    total = unitPrice * qtyOnHandOnCalc;
-                    return total;
                 }
-            } else {
-                for (let j = 0; j < addToCartList.length; j++) {
-                    if (addToCartList[i].getItemCode() == itemCode) {
-                        let alreadyAddedDiscountedPrice = parseFloat(addToCartList[i].getTotalAmount());
-                        let discountedPrice = (discount / 100) * (parseFloat(addToCartList[i].getItemPrice() * (parseInt(addToCartList[i].getItemQty()))));
-                        let removedDiscountOfPreviouslyAdded = alreadyAddedDiscountedPrice + discountedPrice
-                        let reCalculatedDiscount = (discount / 100) * (removedDiscountOfPreviouslyAdded * qtyOnHandOnCalc);
-                        total = itemArray[i].getItemUnitPrice() - reCalculatedDiscount;
-                    }
-                }
-                return total;
             }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
         }
-    }
+    })
+}
+
+function returnTotalFunction(total) {
+    returnTotal = total;
 }
 
 function clearFieldsInHomeAfterPurchase() {
@@ -392,13 +449,53 @@ function clearFieldsInHomeAfterPurchase() {
 }
 
 function deducatQuantityOfItemsOfPurchased(addToCartList) {
-    for (let i = 0; i < itemArray.length; i++) {
-        for (let j = 0; j < addToCartList.length; j++) {
-            if (itemArray[i].getItemCode() == addToCartList[j].getItemCode()) {
-                itemArray[i].setItemQty(itemArray[i].getItemQty() - addToCartList[j].getItemQty());
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=getAll",
+        dataType: "json",
+        contentType: "application/json",
+        method: "GET",
+        success: function (resp) {
+            if (resp.status == 200) {
+                let itemArray = resp;
+                for (let i = 0; i < itemArray.length; i++) {
+                    for (let j = 0; j < addToCartList.length; j++) {
+                        if (itemArray[i].itemCode == addToCartList[j].getItemCode()) {
+                            let arr = {
+                                itemCode: itemArray[i].itemCode,
+                                itemDescription: itemArray[i].itemDescription,
+                                itemQty: itemArray[i].itemQty - addToCartList[j].getItemQty(),
+                                itemBuyingPrice: itemArray[i].itemBuyingPrice,
+                                itemUnitPrice: itemArray[i].itemUnitPrice,
+                                itemDiscount: itemArray[i].itemDiscount
+                            }
+                            $.ajax({
+                                url: "http://localhost/WebPosEE/item",
+                                method: "PUT",
+                                dataType: "json",
+                                contentType: "application/json",
+                                data: JSON.stringify(arr),
+                                success: function (resp) {
+                                    if (resp.status == 200) {
+                                        alert('Item Updated');
+                                    } else if (resp.status == 400) {
+                                        alert(resp.message);
+                                    } else {
+                                        alert(resp.data);
+                                    }
+                                },
+                                error: function (ob, textStatus, error) {
+                                    alert(error);
+                                }
+                            })
+                        }
+                    }
+                }
             }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
         }
-    }
+    })
 }
 
 function disableAllBtns() {

@@ -1,9 +1,9 @@
 var orderDetailsTableTbody = $('#orderDetailsTable tbody');
 
-function setDataToOrderDetailsTable(orderDetailsArray) {
+function setDataToOrderDetailsTable(obj) {
     $('#orderDetailsTable tbody tr').remove();
-    for (let i = 0; i < orderDetailsArray.length; i++) {
-        let row = '<tr><td>' + (i + 1) + '</td><td>' + orderDetailsArray[i].getOrderId() + '</td><td>' + orderDetailsArray[i].getItemCode() + '</td><td>' + orderDetailsArray[i].getItemDescription() + '</td><td>' + orderDetailsArray[i].getItemQty() + '</td><td>' + orderDetailsArray[i].getItemPrice() + '</td><td>' + orderDetailsArray[i].getItemDiscount() + '</td><td>' + orderDetailsArray[i].getItemTotalAmount() + '</td></tr>';
+    for (let i = 0; i < obj.length; i++) {
+        let row = '<tr><td>' + (i + 1) + '</td><td>' + obj[i].orderId + '</td><td>' + obj[i].itemCode + '</td><td>' + obj[i].itemDescription + '</td><td>' + obj[i].itemQty + '</td><td>' + obj[i].itemPrice + '</td><td>' + obj[i].itemDiscount + '</td><td>' + obj[i].total + '</td></tr>';
         orderDetailsTableTbody.append(row);
     }
 }

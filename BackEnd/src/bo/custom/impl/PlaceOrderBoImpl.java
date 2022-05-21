@@ -68,12 +68,30 @@ public class PlaceOrderBoImpl implements PlaceOrderBO {
     }
 
     @Override
-    public ArrayList<OrderDTO> getAllOrders(DataSource dataSource) {
-        return null;
+    public ArrayList<OrderDTO> getAllOrders(DataSource dataSource) throws SQLException {
+        ArrayList<Order> all = orderDao.getAll(dataSource);
+        ArrayList<OrderDTO> getAll = new ArrayList<>();
+        for (Order o : all
+        ) {
+            getAll.add(new OrderDTO(o.getOrderId(), o.getCustomerId(), o.getOrderDate(), o.getOrderTime(), o.getDiscount(), o.getTotalAmount()));
+        }
+        return getAll;
     }
 
     @Override
-    public OrderDTO searchOrder(DataSource dataSource, String orderId) {
+    public OrderDTO searchOrder(DataSource dataSource, String orderId) throws SQLException {
+        Order search = orderDao.search(orderId, dataSource);
+        return new OrderDTO(search.getOrderId(),search.getCustomerId(),search.getOrderDate(),search.getOrderTime(),search.getDiscount(),search.getTotalAmount());
+    }
+
+    @Override
+    public OrderDetailsDTO searchOrderDetails(DataSource dataSource, String orderId) throws SQLException {
+        OrderDetails search = orderDetailsDao.search(orderId, dataSource);
+        return new OrderDetailsDTO(search.getOrderId(),search.getItemCode(),search.getItemDescription(),search.getItemQty(),search.getItemPrice(),search.getItemDiscount(),search.getTotal());
+    }
+
+    @Override
+    public ArrayList<OrderDetailsDTO> getAllOrderDetails(DataSource dataSource) throws SQLException {
         return null;
     }
 }

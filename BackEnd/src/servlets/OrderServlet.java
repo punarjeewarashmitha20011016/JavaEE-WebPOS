@@ -76,6 +76,7 @@ public class OrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String option = req.getParameter("option");
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         PrintWriter writer = resp.getWriter();
         switch (option) {
             case "generateOrderId":
@@ -88,13 +89,11 @@ public class OrderServlet extends HttpServlet {
                         objectBuilder.add("message", "Order ID generated successfully");
                         objectBuilder.add("orderId", id);
                         writer.print(objectBuilder.build());
-                        dataSource.getConnection().close();
                     } else {
                         objectBuilder.add("status", 400);
                         objectBuilder.add("data", "");
                         objectBuilder.add("message", "Order ID generated unsuccessful");
                         writer.print(objectBuilder.build());
-                        dataSource.getConnection().close();
                     }
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
@@ -105,6 +104,97 @@ public class OrderServlet extends HttpServlet {
                     writer.print(objectBuilder.build());
                 }
                 break;
+            case "getAll":
+                try {
+                    ArrayList<OrderDTO> allOrders = placeOrderBO.getAllOrders(dataSource);
+                    if (allOrders != null) {
+                        for (OrderDTO dto : allOrders
+                        ) {
+                            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                            objectBuilder.add("orderId", dto.getOrderId());
+                            objectBuilder.add("customerId", dto.getCustomerId());
+                            objectBuilder.add("orderDate", String.valueOf(dto.getOrderDate()));
+                            objectBuilder.add("orderTime", dto.getOrderTime());
+                            objectBuilder.add("discount", dto.getDiscount());
+                            objectBuilder.add("total", dto.getTotalAmount());
+
+                            objectBuilder.add("status", 200);
+                            objectBuilder.add("data", "");
+                            objectBuilder.add("message", "Order details generated successfully");
+
+                            arrayBuilder.add(objectBuilder.build());
+                        }
+                        writer.print(arrayBuilder.build());
+                    } else {
+                        objectBuilder.add("status", 400);
+                        objectBuilder.add("data", "");
+                        objectBuilder.add("message", "Order details generated unsuccessful");
+
+                        arrayBuilder.add(objectBuilder.build());
+                    }
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                    resp.setStatus(200);
+                    objectBuilder.add("status", 500);
+                    objectBuilder.add("data", throwables.getLocalizedMessage());
+                    objectBuilder.add("message", "Error");
+                    arrayBuilder.add(objectBuilder.build());
+                }
+                break;
+            case "searchOrder":
+                String orderId = req.getParameter("orderId");
+                try {
+                    OrderDTO orderDTO = placeOrderBO.searchOrder(dataSource, orderId);
+                    OrderDetailsDTO orderDetails = placeOrderBO.searchOrderDetails(dataSource, orderId);
+                    JsonObjectBuilder objectBuilder2 = Json.createObjectBuilder();
+
+                    if ((orderDTO != null) && (orderDetails != null)) {
+                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        objectBuilder.add("orderId", orderDTO.getOrderId());
+                        objectBuilder.add("customerId", orderDTO.getCustomerId());
+                        objectBuilder.add("orderDate", String.valueOf(orderDTO.getOrderDate()));
+                        objectBuilder.add("orderTime", orderDTO.getOrderTime());
+                        objectBuilder.add("discount", orderDTO.getDiscount());
+                        objectBuilder.add("total", orderDTO.getTotalAmount());
+
+                        objectBuilder2.add("orderId", orderDetails.getOrderId());
+                        objectBuilder2.add("itemCode", orderDetails.getItemCode());
+                        objectBuilder2.add("itemDescription", orderDetails.getItemDescription());
+                        objectBuilder2.add("itemQty", orderDetails.getItemQty());
+                        objectBuilder2.add("itemPrice", orderDetails.getItemPrice());
+                        objectBuilder2.add("itemDiscount", orderDetails.getItemDiscount());
+                        objectBuilder2.add("total", orderDetails.getTotal());
+                        JsonObject build = objectBuilder2.build();
+                        objectBuilder.add("orderDetails", build);
+
+                        objectBuilder.add("status", 200);
+                        objectBuilder.add("data", "");
+                        objectBuilder.add("message", "Order searched successfully");
+                        writer.print(objectBuilder.build());
+                    } else {
+                        objectBuilder.add("status", 400);
+                        objectBuilder.add("data", "");
+                        objectBuilder.add("message", "Order searched unsuccessful");
+                        writer.print(objectBuilder.build());
+                    }
+
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                    resp.setStatus(200);
+                    objectBuilder.add("status", 500);
+                    objectBuilder.add("data", "");
+                    objectBuilder.add("message", "Error");
+                    writer.print(objectBuilder.build());
+                }
+                break;
+            default:
+                System.out.println("Default in Order Servlet");
+                break;
+        }
+        try {
+            dataSource.getConnection().close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 }

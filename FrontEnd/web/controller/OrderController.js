@@ -5,12 +5,12 @@ var viewOrderDetailsBtn = $('#viewOrderDetailsBtn');
 viewOrderDetailsBtn.prop('disabled', true);
 
 searchOrderId.off('keyup');
-searchOrderId.keyup(function() {
+searchOrderId.keyup(function () {
     if (searchIdPattern.test(searchOrderId.val())) {
         viewOrderDetailsBtn.prop('disabled', false);
         searchOrderId.css('border', '1px solid green');
         viewOrderDetailsBtn.off('click');
-        viewOrderDetailsBtn.click(function() {
+        viewOrderDetailsBtn.click(function () {
             searchOrders();
             // viewOrderDetailsBtn.prop('disabled', true);
         })
@@ -21,17 +21,65 @@ searchOrderId.keyup(function() {
 });
 
 function setDataToOrderTable() {
-    $('#orderTable tbody tr').remove();
-    for (let i = 0; i < orderArray.length; i++) {
-        let row = '<tr><td>' + (i + 1) + '</td><td>' + orderArray[i].getOrderId() + '</td><td>' + orderArray[i].getOrderCustomerId() + '</td><td>' + orderArray[i].getOrderDate() + '</td><td>' + orderArray[i].getOrderTime() + '</td><td>' + orderArray[i].getOrderDiscount() + '</td><td>' + orderArray[i].getOrderTotalAmount() + '</td></tr>';
-        orderTableTbody.append(row);
-    }
+
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/order?option=getAll",
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            let arr = resp;
+            $('#orderTable tbody tr').remove();
+            for (let i = 0; i < arr.length; i++) {
+                if (resp[i].status == 200) {
+                    let orderArray = arr[i];
+                    for (let i = 0; i < orderArray.length; i++) {
+                        let row = '<tr><td>' + (i + 1) + '</td><td>' + orderArray[i].orderId + '</td><td>' + orderArray[i].customerId + '</td><td>' + orderArray[i].orderDate + '</td><td>' + orderArray[i].orderTim + '</td><td>' + orderArray[i].getOrderDiscount() + '</td><td>' + orderArray[i].getOrderTotalAmount() + '</td></tr>';
+                        orderTableTbody.append(row);
+                    }
+                } else if (arr[i].status == 400) {
+                    console.log(resp.message);
+                } else {
+                    alert(resp.data);
+                }
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
+        }
+    })
 }
 
 function searchOrders() {
-    for (let i = 0; i < orderArray.length; i++) {
-        if ((searchOrderId.val() == orderArray[i].getOrderId()) | (searchOrderId.val() == orderArray[i].getOrderCustomerId())) {
-            setDataToOrderDetailsTable(orderArray[i].getOrderDetails());
+
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/order?option=searchOrder&orderId=" + searchOrderId.val(),
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            if (resp.status == 200) {
+                let order = resp;
+                let arr = new Array();
+                let obj = {
+                    orderId: order.orderDetails.orderId,
+                    itemCode: order.orderDetails.itemCode,
+                    itemDescription: order.orderDetails.itemDescription,
+                    itemQty: order.orderDetails.itemQty,
+                    itemPrice: order.orderDetails.itemPrice,
+                    itemDiscount: order.orderDetails.itemDiscount,
+                    total: order.orderDetails.total
+                }
+                arr.push(obj);
+                setDataToOrderDetailsTable(arr);
+            } else if (resp.status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
+            }
+        },
+        error: function (ob, textStatus, error) {
+            alert(error);
         }
-    }
+    })
 }

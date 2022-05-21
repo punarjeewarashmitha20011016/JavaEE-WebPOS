@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Bootstrap SPA -Assignment</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/stylesheet.css">
+    <link rel="stylesheet" href="assets/css/fonts/css/all.css">
+    <style>
+        .dashboardAdmin i {
+            position: absolute;
+            inset: 0 0 0 0;
+            margin: auto;
+            font-size: 150%;
+            width: max-content;
+            height: max-content;
+        }
+
+        .dashboardAdmin .iContainer {
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 100% !important;
+            height: 65% !important;
+            background-image: linear-gradient(rgb(132, 0, 255), rgb(154, 83, 202));
+            transition: 0.5s;
+            animation: pulse 2s linear 1s infinite;
+        }
+
+        .dashboardAdmin .iContainer i {
+            color: white;
+            transition: 0.5s;
+        }
+
+        .dashboardAdmin .iContainer:hover {
+            transform: translateY(-10px);
+            transition: 0.5s;
+        }
+
+        @-webkit-keyframes pulse {
+            0% {
+                box-shadow: 0 0 8px #cc00ff, inset 0 0 8px #ff00f2;
+            }
+            50% {
+                box-shadow: 0 0 16px #cc00ff, inset 0 0 14px #ff00f2;
+            }
+            100% {
+                box-shadow: 0 0 8px #cc00ff, inset 0 0 8px #ff00f2;
+            }
+        }
+
+        .dashboardAdmin .firstRow div:nth-child(2) div {
+            left: 23%;
+        }
+
+        .dashboardAdmin .firstRow h3 {
+            position: absolute;
+            left: 42%;
+            height: 100%;
+        }
+
+        .dashboardAdmin .firstRow h3 span {
+            font-size: 60%;
+        }
+
+        .dashboardAdmin .firstRow i {
+            font-size: 200%;
+        }
+
+        .dashboardAdmin .dailySales,
+        .monthlySales,
+        .annualSales,
+        .mostSellingItem,
+        .leastSellingItem,
+        .totalCashiersRegistered {
+            box-shadow: 20px 15px 40px 0px rgb(87, 85, 85) !important;
+        }
+
+        .dashboardAdmin .adminDashboardNav div > div {
+            width: 110% !important;
+            height: 60% !important;
+        }
+
+        @media all and (min-width: 1024px) and (max-width: 2560px) {
+            .dashboardAdmin .firstRow {
+                height: 7% !important;
+            }
+        }
+
+        @media all and (max-width: 991px) {
+            body {
+                overflow-y: visible !important;
+            }
+
+            .dashboardAdmin {
+                height: 200vh !important;
+            }
+
+            .dashboardAdmin .adminDashboardNav {
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            .dashboardAdmin .adminDashboardNav div {
+                width: calc(100% / 4) !important;
+                height: 100% !important;
+            }
+
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 70% !important;
+                height: 70% !important;
+            }
+
+            .dashboardAdmin .adminDashboardNav div > div i {
+                font-size: 100% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) {
+                height: 100% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) h3 span {
+                position: absolute;
+                width: max-content;
+                height: max-content;
+                top: 0;
+                bottom: 0;
+                margin: auto;
+            }
+        }
+
+        @media all and (min-width: 425px) and (max-width: 500px) {
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 70% !important;
+                height: 100% !important;
+            }
+        }
+
+        @media all and (min-width: 500px) and (max-width: 600px) {
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 60% !important;
+                height: 100% !important;
+            }
+        }
+
+        @media all and (min-width: 600px) and (max-width: 700px) {
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 50% !important;
+                height: 100% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) i {
+                width: max-content !important;
+                left: 130% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) h3 {
+                left: 45% !important;
+            }
+        }
+
+        @media all and (min-width: 700px) and (max-width: 768px) {
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 40% !important;
+                height: 100% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) i {
+                width: max-content !important;
+                left: 130% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) h3 {
+                left: 45% !important;
+            }
+        }
+
+        @media all and (min-width: 768px) and (max-width: 868px) {
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 40% !important;
+                height: 100% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) i {
+                width: max-content !important;
+                left: 130% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) h3 {
+                left: 45% !important;
+            }
+        }
+
+        @media all and (min-width: 868px) and (max-width: 991px) {
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 40% !important;
+                height: 100% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) i {
+                width: max-content !important;
+                left: 130% !important;
+            }
+
+            .dashboardAdmin .firstRow div:nth-child(2) h3 {
+                left: 45% !important;
+            }
+        }
+
+        @media all and (min-width: 1024px) and (max-width: 2560px) {
+            .dashboardAdmin .adminDashboardNav div > div {
+                width: 110% !important;
+                height: 60% !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header id="headerNav" style="display: none;">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <h3 class="navbar-brand text-white fs-4" href="#" style="margin-left: 20px;height: 30px;">WebPos</h3>
+            <i class="fas fa-shopping-cart position-absolute fs-4 text-white" style="left: 140px;"></i>
+            <hr class="position-absolute opacity-100"
+                style="transform: rotate(90deg);width: 35px;height: 4px;left: 180px;background-color: white;">
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="position-absolute navbar-nav flex-row w-100 justify-content-start fs-6 px-4"
+                    style="left:200px;">
+                    <li class="nav-item position-relative"><a class="nav-link text-white" href="#" id="Home"><span
+                            style="position: absolute;top: 0;bottom: 0;left: 0;right: 0;width: max-content;height: max-content;">Home</span></a>
+                    </li>
+                    <li class="nav-item position-relative"><a class="nav-link text-white" href="#" id="Orders"><span
+                            style="position: absolute;top: 0;bottom: 0;left: 0;right: 0;width: max-content;height: max-content;">Orders</span></a>
+                    </li>
+                    <li class="nav-item position-relative"><a class="nav-link text-white" href="#" id="Items"><span
+                            style="position: absolute;top: 0;bottom: 0;left: 0;right: 0;width: max-content;height: max-content;">Items</span></a>
+                    </li>
+                    <li class="nav-item position-relative"><a class="nav-link text-white" href="#" id="Customer"><span
+                            style="position: absolute;top: 0;bottom: 0;left: 0;right: 0;width: max-content;height: max-content;">Customers</span></a>
+                    </li>
+                </ul>
+            </div>
+
+            <a href="#" id="signupBtn" class="d-none d-lg-block">
+                <div class="logout position-absolute">
+                    <i class="fas fa-user-plus text-white fs-3 position-absolute"></i>
+                    <h3 class="position-absolute text-white fs-6">Sign Up</h3>
+                </div>
+            </a>
+
+            <a href="#" id="logoutBtn" class="d-none d-lg-block">
+                <div class="logout position-absolute">
+                    <i class="fas fa-sign-out-alt text-white fs-3 position-absolute"></i>
+                    <h3 class="position-absolute text-white fs-6">Logout</h3>
+                </div>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                    aria-controls="offcanvasNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+
+            <div class="offcanvas offcanvas-end d-block d-sm-block d-md-block d-lg-none" tabindex="-1"
+                 id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel"
+                 style="background-color: transparent !important;">
+                <div class="offcanvas-header" style="background-color: #575454 !important;">
+                    <h5 class="offcanvas-title text-white" id="offcanvasNavbarLabel">WebPos</h5>
+                    <i class="fas fa-shopping-cart position-absolute fs-4 text-white" style="left: 110px;"></i>
+                    <div class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close"
+                         style="border: none !important;color: white !important;font-size: 30px;">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-center flex-grow-1">
+                        <li class="nav-item" style="top: 100px !important;"><a class="nav-link text-white" href="#"
+                                                                               id="mobileNavHome"><span>Home</span></a>
+                        </li>
+                        <li class="nav-item" style="top: 150px !important;"><a class="nav-link text-white" href="#"
+                                                                               id="mobileNavOrders"><span>Orders</span></a>
+                        </li>
+                        <li class="nav-item" style="top: 200px !important;"><a class="nav-link text-white" href="#"
+                                                                               id="mobileNavItems"><span>Items</span></a>
+                        </li>
+                        <li class="nav-item" style="top: 250px !important;"><a class="nav-link text-white" href="#"
+                                                                               id="mobileNavCustomer"><span>Customers</span></a>
+                        </li>
+                        <li class="nav-item" style="top: 300px !important;"><a class="nav-link text-white" href="#"
+                                                                               id="mobileNavSignup"><span>Signup</span></a>
+                        </li>
+                        <li class="nav-item" style="top: 350px !important;"><a class="nav-link text-white" href="#"
+                                                                               id="mobileNavLogout"><span>Logout</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <!-- -------------------Home section---------------------------- -->
+    <section id="homeSection" class="Home container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="row h-50 position-relative start-0 end-0 m-auto" style="width: 95%;top: 20px;">
+                <div class="col-md-3 bg-light shadow col-12">
+                    <div class="row position-relative" style="height: 40px; background-color: rgb(133, 135, 138);">
+                        <h3 class="fs-6 text-white top-0 bottom-0 m-auto" style="text-align: center;">Customer
+                            Details</h3>
+                    </div>
+
+                    <div class="form-floating position-relative" style="top: 20px;">
+                        <input type="text" class="form-control bg-transparent" id="customerIdHome" placeholder="Id"
+                               style="height: 40px;">
+                        <label for="customerIdHome" style="width: 100%;"><span id="customerIdHomeLbl">Id</span></label>
+                    </div>
+                    <div class="form-floating position-relative" style="top: 30px;">
+                        <input type="text" class="form-control bg-transparent" id="customerNameHome" placeholder="Name"
+                               style="height: 40px;">
+                        <label for="customerNameHome"><span>Name</span></label>
+                    </div>
+                    <div class="form-floating position-relative" style="top: 40px;">
+                        <input type="text" class="form-control bg-transparent" id="customerAddressHome"
+                               placeholder="Address" style="height: 40px;">
+                        <label for="customerAddressHome"><span>Address</span></label>
+                    </div>
+                    <div class="form-floating position-relative" style="top: 50px;">
+                        <input type="tel" class="form-control bg-transparent" id="customerTelHome" placeholder="Tel"
+                               style="height: 40px;">
+                        <label for="customerTelHome"><span>Tel</span></label>
+                    </div>
+
+                </div>
+                <div class="col-sm-12 bg-light mx-4 shadow col-12 col-md-5">
+                    <div class="row position-relative" style="height: 40px; background-color: rgb(133, 135, 138);">
+                        <h3 class="fs-6 text-white top-0 bottom-0 m-auto" style="text-align: center;">Item Details</h3>
+                    </div>
+
+                    <div class="row" style="height: 86%;">
+                        <div class="col border">
+                            <div class="form-floating position-relative" style="top: 20px;">
+                                <select class="form-select bg-transparent" id="itemCodeHome"
+                                        aria-label="Floating label select example" style="height: 40px; width: 100%;">
+
+                                </select>
+                                <label for="itemCodeHome">Code</label>
+                            </div>
+                            <div class="form-floating position-relative" style="top: 30px;">
+                                <input type="text" class="form-control bg-transparent" id="itemDescriptionHome"
+                                       placeholder="Name" style="height: 40px;width: 100%;">
+                                <label for="itemDescriptionHome"><span>Description</span></label>
+                            </div>
+                            <div class="form-floating position-relative" style="top: 40px;">
+                                <input type="text" class="form-control bg-transparent" id="itemQtyHome"
+                                       placeholder="Address" style="height: 40px;width: 100%;">
+                                <label for="itemQtyHome"><span>Qty</span></label>
+                            </div>
+                            <div class="form-floating position-relative" style="top: 50px;">
+                                <input type="tel" class="form-control  bg-transparent" id="itemUnitPriceHome"
+                                       placeholder="Tel" style="height: 40px;width: 100%;">
+                                <label for="itemUnitPriceHome"><span>Unit Price</span></label>
+                            </div>
+                        </div>
+                        <div class="col border position-relative">
+                            <div class="form-floating position-relative" style="top: 20px;">
+                                <input type="tel" class="form-control  bg-transparent" id="itemQtyOnHandHome"
+                                       placeholder="Tel" style="height: 40px;width: 100%;">
+                                <label for="itemQtyOnHandHome" style="width: 100%;"><span
+                                        id="qtyOnHandLbl">Qty On Hand</span></label>
+                            </div>
+
+                            <div class="form-floating position-relative" style="top: 30px;">
+                                <input type="tel" class="form-control  bg-transparent" id="itemDiscountHome"
+                                       placeholder="Tel" style="height: 40px;width: 100%;">
+                                <label for="itemDiscountHome"><span>Discount</span></label>
+                            </div>
+
+                            <div class="container-fluid position-absolute"
+                                 style="left: 0;right: 0;margin: auto;width: 120px;bottom: 110px;">
+                                <button class="btn btn-outline-success btn-md position-absolute start-0"
+                                        style="width: 100%;" id="addToCartBtn">Add To Cart
+                                </button>
+                                <button id="clearCartBtn"
+                                        class="btn btn-outline-danger btn-md position-absolute start-0"
+                                        style="width: 100%;top: 50px;">Clear Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md bg-light shadow position-relative col-12">
+                    <div class="form position-relative" style="top: 10px;">
+                        <input type="text" class="form-control bg-transparent" id="orderIdHome" placeholder="Order Id">
+                    </div>
+
+
+                    <div class="row position-relative" style="top: 10px;">
+                        <div class="col col-sm-12 mt-sm-2 mt-2">
+                            <div class="form-floating position-relative">
+                                <input type="tel" class="form-control  bg-transparent" id="orderDiscount"
+                                       placeholder="Tel" style="height: 40px;">
+                                <label for="orderDiscount"><span>Discount</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col col-sm-12 mt-sm-2 mt-2">
+                            <div class="form-floating position-relative">
+                                <input type="tel" class="form-control  bg-transparent" id="orderCashReceived"
+                                       placeholder="Tel" style="height: 40px;">
+                                <label for="orderCashReceived"><span>Cash</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row position-relative" style="top: 20px;">
+                        <div class="col">
+                            <div class="form-floating position-relative">
+                                <input type="tel" class="form-control  bg-transparent" id="orderCashBalance"
+                                       placeholder="Tel" style="height: 40px;">
+                                <label for="orderCashBalance"><span>Balance</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row position-relative" style="top: 25px;">
+                        <div class="col-6 position-relative">
+                            <h6 class="position-relative" style="top: 8px;">Sub Total - </h6>
+                        </div>
+                        <div class="col">
+                            <div class="form position-relative">
+                                <input type="tel" class="form-control  bg-transparent" id="orderSubTotal"
+                                       style="height: 34px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row position-relative" style="top: 30px;">
+                        <div class="col-6 position-relative">
+                            <h6 class="position-relative" style="top: 8px;">Total - </h6>
+                        </div>
+                        <div class="col">
+                            <div class="form position-relative">
+                                <input type="tel" class="form-control  bg-transparent" id="orderTotal"
+                                       style="height: 34px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row position-relative start-0 end-0 m-auto" style="width: 95%;top: 40px; height: 30%;">
+                <div class="col bg-light position-relative" style="height: 100%;overflow: auto;">
+                    <table class="table table-hover" id="addToCartTable">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Customer Id</th>
+                            <th scope="col">Item Code</th>
+                            <th scope="col">Item Description</th>
+                            <th scope="col">Item Qty</th>
+                            <th scope="col">Item Price</th>
+                            <th scope="col">Item Discount</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row position-absolute end-0 w-25 me-5" style="margin-top: 60px;">
+                <div class="col col-sm">
+                    <button id="purchaseBtn" class="btn btn-outline-success w-100">Purchase</button>
+                </div>
+                <div class="col col-sm">
+                    <button id="discardBtn" class="btn btn-outline-danger w-100">Discard</button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- -------------------Orders section---------------------------- -->
+    <section id="ordersSection" class="Orders container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="row container-fluid position-absolute"
+                 style="top: 30px;left: 0;right:0;margin: auto; width: 80%;height: 25%;">
+                <div class="col-12 position-relative col-sm-8">
+                    <div class="form-floating position-relative" style="top: 30px;">
+                        <input type="text" class="form-control bg-transparent border-3" id="searchOrderId"
+                               placeholder="Name" style="height: 40px;width: 760px  ">
+                        <label for="searchOrderId"><span>Search Order by Order Id, Customer Id</span></label>
+                    </div>
+                </div>
+                <div class="col-12 position-absolute col-sm" style="top: 30px; left: 79.5%;">
+                    <button id="viewOrderDetailsBtn" class="btn btn-secondary">View Order Details</button>
+                </div>
+            </div>
+            <div class="row position-absolute border-5 shadow"
+                 style="top: 25%; left: 0;right: 0;margin: auto;height: 400px;width: 93%;">
+                <div class="col-11 position-relative col-sm-12" style="height: 100%;overflow:auto;">
+                    <table id="orderTable" class="table table-hover position-absolute start-0 end-0 m-auto">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Order Id</th>
+                            <th scope="col">Customer Id</th>
+                            <th scope="col">Order Date</th>
+                            <th scope="col">Order Time</th>
+                            <th scope="col">Discount</th>
+                            <th scope="col">Totl Amount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- -------------------Order Details Section--------------------- -->
+    <section id="orderDetailsSection" class="OrderDetails container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="row position-absolute" style="top: 5%; left: 0;right: 0;margin: auto;height: 90%;width: 90%;">
+                <div class="col shadow position-relative" style="height: 100%;overflow: auto">
+                    <table id="orderDetailsTable" class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Order Id</th>
+                            <th scope="col">Item Code</th>
+                            <th scope="col">Item Description</th>
+                            <th scope="col">Item Qty</th>
+                            <th scope="col">Item Price</th>
+                            <th scope="col">Item Discount</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- -------------------Item Deltails section----------------------------- -->
+    <section id="itemDetailsSection" class="Items container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="row position-absolute" style="left: 10%;width: 80%;">
+                <div class="col-11 form-floating position-relative" style="top: 30px;left: 0;right: 0;margin: auto;">
+                    <input type="text" class="form-control bg-transparent border-3" id="itemDetailsSearchId"
+                           placeholder="Name" style="height: 40px;width: 760px  ">
+                    <label for="itemDetailsSearchId"
+                           style="position: absolute;width: 80%;height: 100%;top: 0;bottom: 0;margin: auto;height: 100%;left: 2%;"><span
+                            class="position-absolute"
+                            style="top: 0;bottom: 0;margin: auto;height: max-content;width: max-content;">Search Item Details by Item Id</span></label>
+                </div>
+                <div class="col position-absolute col-sm"
+                     style="top: 30px;right: 0;left: unset;margin: unset;width: max-content;">
+                    <button id="searchItemDetailsBtn" class="btn btn-secondary">Search Item Details</button>
+                </div>
+            </div>
+            <div class="row position-absolute border-5 shadow"
+                 style="top: 10%;bottom:0; left: 0;right: 0;margin: auto;height:80%;width: 93%;">
+                <div class="col position-relative h-100" style="height: 100%;overflow:auto;">
+                    <table id="itemDetailsTable"
+                           class="table table-striped table-responsive table-hover shadow position-absolute start-0 end-0 m-auto">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Buying Price</th>
+                            <th scope="col">Unit Price</th>
+                            <th scope="col">Discount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- -------------------Customers section-------------------------- -->
+    <section id="customerSection" class="Customer container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="row container position-relative" style="top: 30px;left: 0;right:0;margin: auto; width: 80%;">
+                <div class="col position-relative">
+                    <div class="row position-relative" style="top: 0;">
+                        <div class="col-6 col-sm-6 col-md position-relative">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100" id="cusId"
+                                       placeholder="Name" style="height: 40px;">
+                                <label for="cusId" id="cusIdLabelInCustomers"><span>Id</span></label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-6 col-md">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100" id="cusName"
+                                       placeholder="Name" style="height: 40px;">
+                                <label for="cusName" id="cusNameLabelInCustomers"><span>Name</span></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100" id="cusContactNo"
+                                       placeholder="Name" style="height: 40px;">
+                                <label for="cusContactNo"
+                                       id="cusContactLabelInCustomers"><span>Contact No</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row position-relative" style="top: 10px;">
+                        <div class="col-6 col-sm-6 col-md">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100" id="cusNic"
+                                       placeholder="Name" style="height: 40px;">
+                                <label for="cusNic" id="cusNicLabelInCustomers"><span>Nic</span></label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-6 col-md">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100" id="cusAddress"
+                                       placeholder="Name" style="height: 40px;">
+                                <label for="cusAddress" id="cusAddressLabelInCustomers"><span>Address</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row container position-relative"
+                 style="top: 50px;left: 0;right:0;margin: auto; width: 80%;height: 10%;">
+                <div class="col-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button id="saveCustomer" class="btn btn-outline-success position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px; width: 100%;">Add
+                        </button>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button id="cusUpdateBtn" class="btn btn-outline-secondary position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px;width: 100%;">Update
+                        </button>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button id="cusDeleteBtn" class="btn btn-outline-danger position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px;width: 100%;">Delete
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button id="customerSearchBtn" class="btn btn-outline-primary position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px;width: 100%;">Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row position-absolute border-5 shadow"
+                 style="top: 35%; left: 0;right: 0;margin: auto;height: 330px;width: 93%;">
+                <div class="col position-relative h-100" style="height: 100%;overflow:auto;">
+                    <table id="tblCus"
+                           class="table table-striped table-responsive table-hover shadow position-absolute start-0 end-0 m-auto">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Id</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Nic</th>
+                            <th scope="col">Contact No</th>
+                            <th scope="col">Address</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- -------------------Signup section-------------------------- -->
+    <section id="signupSection" class="Signup container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="container">
+                <div class="row position-absolute"
+                     style="top: 10%;left: 0;right: 0;margin: auto;width: 800px;height: max-content;">
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpId" placeholder="Tel"
+                                       style="height: 50px;">
+                                <label id="signUpIdLbl" for="signUpId" class="position-absolute"><span
+                                        style="width: 100%;">Id</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpName" placeholder="Tel"
+                                       style="height: 50px;">
+                                <label id="signUpNameLbl" for="signUpName" class="position-absolute"><span
+                                        style="width: 100%;">Name</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpNic" placeholder="Tel"
+                                       style="height: 50px;">
+                                <label id="signUpNicLbl" for="signUpNic" class="position-absolute"><span
+                                        style="width: 100%;">NIC</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="tel" class="form-control bg-transparent" id="signUpContactNo"
+                                       placeholder="Tel" style="height: 50px;">
+                                <label id="signUpContactNoLbl" for="signUpContactNo" class="position-absolute"><span
+                                        style="width: 100%;">Contact No</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpUserName"
+                                       placeholder="Tel" style="height: 50px;">
+                                <label id="signUpUserNameLbl" for="signUpUserName" class="position-absolute"><span
+                                        style="width: 100%;">User Name</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="password" class="form-control bg-transparent" id="signUpPassword"
+                                       placeholder="Tel" style="height: 50px;">
+                                <label id="signUpPasswordLbl" for="signUpPassword" class="position-absolute"><span
+                                        style="width: 100%;">Password</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpAddress"
+                                       placeholder="Tel" style="height: 50px;">
+                                <label id="signUpAddressLbl" for="signUpAddress" class="position-absolute"><span
+                                        style="width: 100%;">Address</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row position-absolute"
+                     style="top: 75%;left: 0;right: 0;margin: auto;width: 800px;height: max-content;">
+                    <div class="col-6 col-sm-6 col-md">
+                        <button id="addSignupDetailsBtn" class="btn btn-outline-success" style="width: 100%;">Add
+                        </button>
+                    </div>
+                    <div class="col-6 col-sm-6 col-md">
+                        <button id="updateSignupDetailsBtn" class="btn btn-outline-secondary" style="width: 100%;">
+                            Update
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button id="deleteSignupDetailsBtn" class="btn btn-outline-danger" style="width: 100%;">Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" id="signupForAdminBtn">
+            <div class="logout position-absolute d-none d-lg-block">
+                <i class="fas fa-user-plus text-white fs-3 position-absolute"></i>
+                <h3 class="position-absolute text-white fs-6">Admin Sign Up</h3>
+            </div>
+        </a>
+
+        <a href="#" id="logoutBtnInSignup">
+            <div class="logout position-absolute d-none d-lg-block">
+                <i class="fas fa-sign-out-alt text-white fs-3 position-absolute"></i>
+                <h3 class="position-absolute text-white fs-6">Logout</h3>
+            </div>
+        </a>
+    </section>
+
+    <!--  Signup for Admin section -->
+    <section class="adminSignup container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="container">
+                <div class="row position-absolute"
+                     style="top: 10%;left: 0;right: 0;margin: auto;width: 800px;height: max-content;">
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpAdminId"
+                                       placeholder="Tel" style="height: 50px;" name="adminId">
+                                <label id="signUpAdminIdLbl" for="signUpAdminId" class="position-absolute"><span
+                                        style="width: 100%;">Id</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpAdminName"
+                                       placeholder="Tel" style="height: 50px;" name="adminName">
+                                <label id="signUpAdminNameLbl" for="signUpAdminName" class="position-absolute"><span
+                                        style="width: 100%;">Name</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpAdminNic"
+                                       placeholder="Tel" style="height: 50px;" name="adminNic">
+                                <label id="signUpAdminNicLbl" for="signUpAdminNic" class="position-absolute"><span
+                                        style="width: 100%;">NIC</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="tel" class="form-control bg-transparent" id="signUpAdminContactNo"
+                                       placeholder="Tel" style="height: 50px;" name="adminContactNo">
+                                <label id="signUpAdminContactNoLbl" for="signUpAdminContactNo"
+                                       class="position-absolute"><span style="width: 100%;">Contact No</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpAdminUserName"
+                                       placeholder="Tel" style="height: 50px;" name="adminUserName">
+                                <label id="signUpAdminUserNameLbl" for="signUpAdminUserName"
+                                       class="position-absolute"><span style="width: 100%;">User Name</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-12 col-md">
+                            <div class="form-floating position-relative shadow">
+                                <input type="password" class="form-control bg-transparent" id="signUpAdminPassword"
+                                       placeholder="Tel" style="height: 50px;" name="adminPassword">
+                                <label id="signUpAdminPasswordLbl" for="signUpAdminPassword"
+                                       class="position-absolute"><span style="width: 100%;">Password</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-floating position-relative shadow">
+                                <input type="text" class="form-control bg-transparent" id="signUpAdminAddress"
+                                       placeholder="Tel" style="height: 50px;" name="adminAddress">
+                                <label id="signUpAdminAddressLbl" for="signUpAdminAddress"
+                                       class="position-absolute"><span style="width: 100%;">Address</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row position-absolute" style="top: 75%;left: 0;right: 0;margin: auto;height: max-content;">
+                    <div class="col-6 col-sm-6 col-md">
+                        <button id="addAdminSignupDetailsBtn" class="btn btn-outline-success" style="width: 100%;">Add
+                        </button>
+                    </div>
+                    <div class="col-6 col-sm-6 col-md">
+                        <button id="updateAdminSignupDetailsBtn" class="btn btn-outline-secondary" style="width: 100%;">
+                            Update
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button id="deleteAdminSignupDetailsBtn" class="btn btn-outline-danger" style="width: 100%;">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" id="logoutBtnInAdminSignup">
+            <div class="logout position-absolute d-none d-lg-block">
+                <i class="fas fa-sign-out-alt text-white fs-3 position-absolute"></i>
+                <h3 class="position-absolute text-white fs-6">Logout</h3>
+            </div>
+        </a>
+    </section>
+
+    <!-- -------------------Manage Items section----------------------------- -->
+    <section id="manageItemsSection" class="ManageItems container-fluid position-relative" style="display: none;">
+        <div class="container-fluid position-absolute shadow">
+            <div class="row container position-relative" style="top: 30px;left: 0;right:0;margin: auto; width: 80%;">
+                <div class="col position-relative">
+                    <div class="row position-relative" style="top: 0;">
+                        <div class="col-6 col-sm-6 col-md position-relative">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100"
+                                       id="itemCodeInItems" placeholder="code" style="height: 40px;">
+                                <label for="itemCodeInItems" id="itemCodeLblInItems"><span>Code</span></label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-6 col-md">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100"
+                                       id="itemDescriptionInItems" placeholder="Description" style="height: 40px;">
+                                <label for="itemDescriptionInItems"
+                                       id="itemDescriptionLblInItems"><span>Description</span></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100"
+                                       id="itemQtyInItems" placeholder="Qty" style="height: 40px;">
+                                <label for="itemQtyInItems" id="itemQtyLblInItems"><span>Qty</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row position-relative" style="top: 10px;">
+                        <div class="col-6 col-sm">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100"
+                                       id="itemBuyingPriceInItems" placeholder="Buying Price" style="height: 40px;">
+                                <label for="itemBuyingPriceInItems"
+                                       id="itemBuyingPriceLblInItems"><span>Buying Price</span></label>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100"
+                                       id="itemUnitPriceInItems" placeholder="Unit Price" style="height: 40px;">
+                                <label for="itemUnitPriceInItems"
+                                       id="itemUnitPriceLblInItems"><span>Unit Price</span></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating position-relative">
+                                <input type="text" class="form-control bg-transparent border-3 w-100"
+                                       id="itemDiscountInItems" placeholder="Discount" style="height: 40px;">
+                                <label for="itemDiscountInItems"
+                                       id="itemDiscountLblInItems"><span>Discount</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row container position-relative"
+                 style="top: 50px;left: 0;right:0;margin: auto; width: 80%;height: 10%;">
+                <div class="col-sm-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button id="saveItems" class="btn btn-outline-success position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px; width: 100%;">Add Item
+                        </button>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button class="btn btn-outline-secondary position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px;width: 100%;" id="updateItemBtn">
+                            Update Item
+                        </button>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button class="btn btn-outline-danger position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px;width: 100%;" id="deleteItemBtn">
+                            Delete Item
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3 position-relative">
+                    <div class="col-11 position-absolute" style="top: 0;bottom: 0;left:0;right:0;margin: auto;">
+                        <button id="searchItemBtn" class="btn btn-outline-primary position-absolute"
+                                style="top: 0;bottom: 0;margin: auto;height: 40px;width: 100%;" id="deleteItemBtn">
+                            Search Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row position-absolute border-5 shadow"
+                 style="top: 35%; left: 0;right: 0;margin: auto;height: 330px;width: 93%;">
+                <div class="col position-relative h-100" style="height: 100%;overflow:auto;">
+                    <table class="table table-striped table-responsive table-hover shadow position-absolute start-0 end-0 m-auto">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Buying Price</th>
+                            <th scope="col">Unit Price</th>
+                            <th scope="col">Discount</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup Detials section -->
+
+    <section id="signupDetailsSection" class="position-relative container-fluid" style="display: none;">
+        <div class="row container shadow position-absolute" style="top: 0;bottom: 0;left: 0;right: 0;margin: auto;">
+            <div class="col position-relative">
+                <div id="firstAdminRow" class="row position-relative"
+                     style="margin-top: 2%;height: 50%;width: 100%;left: 0;right: 0;margin-left: auto;margin-right: auto;">
+                    <div class="row position-absolute"
+                         style="top: 0;height: 15%;left: 0;right: 0;margin-left: auto;margin-right: auto;width: 100%;">
+                        <div class="col h-100">
+                            <div class="row container-fluid position-absolute"
+                                 style="top: 0;left: 0;right:0;margin: auto; width: 80%;height: 100%;">
+                                <div class="col-12 position-relative col-sm-8 col-md-8" style="height: 80%;">
+                                    <div class="form-floating position-relative" style="top: 0;height: 100%;">
+                                        <input type="text" class="form-control bg-transparent border-3"
+                                               id="searchAdminDetails" placeholder="Name" style="height: 100%;">
+                                        <label for="searchAdminDetails" class="position-absolute"
+                                               style="top: 0;bottom: 0;margin: auto;height: max-content;width: max-content;"><span
+                                                class="position-absolute"
+                                                style="top: 0;bottom: 0;margin: auto;height: max-content;width: max-content;">Search Admin Details by Admin Id</span></label>
+                                    </div>
+                                </div>
+                                <div class="col position-relative col-sm col-md" style="top: 0; right: 0;height: 80%;">
+                                    <button id="searchAdminDetailsBtn" class="btn btn-secondary h-100"
+                                            style="position: absolute;left: 0;right: 0;margin: auto;top: 0;bottom: 0;width: 60%;">
+                                        <span style="position: absolute;inset: 0 0 0 0;margin: auto;width: max-content;height: max-content;">Search</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row position-absolute"
+                         style="margin-top: 6%;height: 60%;width: 100%;left: 0;right: 0;margin-left: auto;margin-right: auto;">
+                        <div class="col">
+                            <table id="adminDetailsTable"
+                                   class="table table-striped table-responsive table-hover shadow position-absolute start-0 end-0 m-auto h-100">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Nic</th>
+                                    <th scope="col">Tel</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Password</th>
+                                    <th scope="col">Address</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <div id="secondAdminRow" class="row position-relative"
+                     style="margin-top: -1%;height: 50%;width: 100%;left: 0;right: 0;margin-left: auto;margin-right: auto;">
+                    <div class="row position-absolute"
+                         style="top: 0;height: 15%;left: 0;right: 0;margin-left: auto;margin-right: auto;width: 100%;">
+                        <div class="col h-100">
+                            <div class="row container-fluid position-absolute"
+                                 style="top: 0;left: 0;right:0;margin: auto; width: 80%;height: 100%;">
+                                <div class="col-12 position-relative col-sm-8 col-md-8" style="height: 80%;">
+                                    <div class="form-floating position-relative" style="top: 0;height: 100%;">
+                                        <input type="text" class="form-control bg-transparent border-3"
+                                               id="searchCashierDetails" placeholder="Name" style="height: 100%;">
+                                        <label for="searchCashierDetails" class="position-absolute"
+                                               style="top: 0;bottom: 0;margin: auto;height: max-content;width: max-content;"><span
+                                                class="position-absolute"
+                                                style="top: 0;bottom: 0;margin: auto;height: max-content;width: max-content;">Search Cashier Details by Cashier Id</span></label>
+                                    </div>
+                                </div>
+                                <div class="col position-relative col-sm col-md" style="top: 0; right: 0;height: 80%;">
+                                    <button id="searchCashierDetailsBtn" class="btn btn-secondary h-100"
+                                            style="position: absolute;left: 0;right: 0;margin: auto;top: 0;bottom: 0;width: 60%;">
+                                        <span style="position: absolute;inset: 0 0 0 0;margin: auto;width: max-content;height: max-content;">Search</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row position-absolute"
+                         style="margin-top: 6%;height: 60%;width: 100%;left: 0;right: 0;margin-left: auto;margin-right: auto;">
+                        <div class="col">
+                            <table id="cashierDetailsTable"
+                                   class="table table-striped table-responsive table-hover shadow position-absolute start-0 end-0 m-auto h-100">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Nic</th>
+                                    <th scope="col">Tel</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Password</th>
+                                    <th scope="col">Address</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ------------------Login Section----------------------------- -->
+    <section class="login container-fluid position-relative"
+             style="height: 100vh;width: 100%;background-color: rgb(231, 231, 231) !important;display: block;"
+             id="loginSection">
+        <div><img src="assets/shapes/small%20icon-01.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-02.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-03.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-04.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-05.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-06.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-07.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-08.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-09.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-10.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-11.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-12.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-13.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-14.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-12.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-13.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-14.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-04.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-05.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-12.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-13.png" alt=""></div>
+        <div><img src="assets/shapes/small%20icon-05.png" alt=""></div>
+        <div class="container-fluid shadow"
+             style="position: absolute;inset: 0 0 0 0;margin: auto;width: 50%;height: 70%;background-color: rgb(228, 225, 225) !important;border-radius: 20px;">
+            <h3 style="position: absolute;left: 0;right: 0;margin: auto;width: max-content;top: 40px;">WebPos</h3>
+            <div class="row position-absolute"
+                 style="top: 25%;left: 0;right: 0;margin: auto;width: 400px;height: max-content;">
+                <div class="col">
+                    <div class="form-floating position-relative shadow">
+                        <input type="text" class="form-control bg-transparent" id="userNameLoginId" placeholder="Tel"
+                               style="height: 50px;">
+                        <label for="userNameLoginId" class="position-absolute"><span>User Name</span></label>
+                    </div>
+                </div>
+            </div>
+            <div class="row position-absolute"
+                 style="top: 40%;left: 0;right: 0;margin: auto;width: 400px;height: max-content;">
+                <div class="col">
+                    <div class="form-floating position-relative shadow">
+                        <input type="password" class="form-control  bg-transparent" id="passwordLoginId"
+                               placeholder="Tel" style="height: 50px;">
+                        <label for="passwordLoginId" class="position-absolute"><span>Password</span></label>
+                    </div>
+                </div>
+            </div>
+            <div class="row"
+                 style="position:absolute;top: 63%;left: 0;right: 0;margin: auto;width: 200px;height: 40px;">
+                <div class="col-12">
+                    <a href="#" id="loginBtn">
+                        <button class="btn btn-outline-success shadow w-100">Login</button>
+                    </a>
+                </div>
+            </div>
+            <div class="row"
+                 style="position:absolute;top: 75%;left: 0;right: 0;margin: auto;width: 200px;height: 40px;">
+                <div class="col-12">
+                    <a href="#" id="signupBtnInLogin">
+                        <button class="btn btn-outline-secondary shadow w-100">Signup</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Admin Home Dashboard -->
+    <section class="dashboardAdmin container-fluid position-relative"
+             style="width: 100%;height: 100vh;background-color: rgb(226, 226, 226);display: none;">
+        <div class="firstRow row position-absolute start-0 end-0 m-auto"
+             style="width: 100%;height: 6%;top: 2.5%;bottom: unset;">
+            <div class="col-lg-8 position-relative">
+            </div>
+            <div class="col-md col-sm position-relative">
+                <div class="position-absolute" style="width: 10%;height: 100%;"><i
+                        class="fas fa-user-cog position-absolute start-0 end-0 top-0 bottom-0 m-auto"
+                        style="width: 100%;height: max-content;"></i></div>
+                <h3><span>Hi Admin - Welcome</span></h3>
+            </div>
+        </div>
+        <div class="row position-absolute start-0 end-0 top-0 bottom-0 m-auto" style="width: 90%;height: 85%;">
+            <div class="col-lg-11 col-sm-12 col-md-12 position-relative start-0 end-0 top-0 bottom-0 m-auto shadow"
+                 style="border-radius: 20px; background-color: rgb(255, 255, 255);width: 90%;height: 90%;">
+                <div class="container position-absolute start-0 end-0 top-0 bottom-0 m-auto"
+                     style="width: 90%;height: 90%;">
+                    <div class="cardsRow row position-relative" style="height: 50%;">
+                        <div class="col-md col-sm-12 position-relative">
+                            <div class="dailySales position-absolute start-0 end-0 top-0 bottom-0 m-auto shadow-lg"
+                                 style="border-radius: 20px;height: 80%;width: 80%;background-color: rgb(131, 150, 201);">
+                                <div class="row position-relative" style="height: 50%;">
+                                    <div class="col-12"><i
+                                            class="fas fa-user-cog start-0 end-0 top-0 bottom-0 m-auto position-absolute fs-1 text-white"
+                                            style="width: max-content;"></i></div>
+                                </div>
+                                <div class="row position-relative" style="height: 50%;">
+                                    <h3 style="position: absolute;top: 5%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Daily Sales</h3>
+                                    <p style="position: absolute;bottom: 15%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Rs. <span>1000.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-12 position-relative">
+                            <div class="monthlySales position-absolute start-0 end-0 top-0 bottom-0 m-auto shadow-lg"
+                                 style="border-radius: 20px;height: 80%;width: 80%;background-color: rgb(131, 150, 201);">
+                                <div class="row position-relative" style="height: 50%;">
+                                    <div class="col-12"><i
+                                            class="fas fa-user-cog start-0 end-0 top-0 bottom-0 m-auto position-absolute fs-1 text-white"
+                                            style="width: max-content;"></i></div>
+                                </div>
+                                <div class="row position-relative" style="height: 50%;">
+                                    <h3 style="position: absolute;top: 5%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Daily Sales</h3>
+                                    <p style="position: absolute;bottom: 15%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Rs. <span>1000.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-12 position-relative">
+                            <div class="annualSales position-absolute start-0 end-0 top-0 bottom-0 m-auto shadow-lg"
+                                 style="border-radius: 20px;height: 80%;width: 80%;background-color: rgb(131, 150, 201);">
+                                <div class="row position-relative" style="height: 50%;">
+                                    <div class="col-12"><i
+                                            class="fas fa-user-cog start-0 end-0 top-0 bottom-0 m-auto position-absolute fs-1 text-white"
+                                            style="width: max-content;"></i></div>
+                                </div>
+                                <div class="row position-relative" style="height: 50%;">
+                                    <h3 style="position: absolute;top: 5%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Daily Sales</h3>
+                                    <p style="position: absolute;bottom: 15%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Rs. <span>1000.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row position-relative" style="height: 50%;">
+                        <div class="col-md col-sm-12 position-relative">
+                            <div class="mostSellingItem position-absolute start-0 end-0 top-0 bottom-0 m-auto shadow-lg"
+                                 style="border-radius: 20px;height: 80%;width: 80%;background-color: rgb(131, 150, 201);">
+                                <div class="row position-relative" style="height: 50%;">
+                                    <div class="col-12"><i
+                                            class="fas fa-user-cog start-0 end-0 top-0 bottom-0 m-auto position-absolute fs-1 text-white"
+                                            style="width: max-content;"></i></div>
+                                </div>
+                                <div class="row position-relative" style="height: 50%;">
+                                    <h3 style="position: absolute;top: 5%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Daily Sales</h3>
+                                    <p style="position: absolute;bottom: 15%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Rs. <span>1000.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-12 position-relative">
+                            <div class="leastSellingItem position-absolute start-0 end-0 top-0 bottom-0 m-auto shadow-lg"
+                                 style="border-radius: 20px;height: 80%;width: 80%;background-color: rgb(131, 150, 201);">
+                                <div class="row position-relative" style="height: 50%;">
+                                    <div class="col-12"><i
+                                            class="fas fa-user-cog start-0 end-0 top-0 bottom-0 m-auto position-absolute fs-1 text-white"
+                                            style="width: max-content;"></i></div>
+                                </div>
+                                <div class="row position-relative" style="height: 50%;">
+                                    <h3 style="position: absolute;top: 5%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Daily Sales</h3>
+                                    <p style="position: absolute;bottom: 15%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Rs. <span>1000.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md col-sm-12 position-relative">
+                            <div class="totalCashiersRegistered position-absolute start-0 end-0 top-0 bottom-0 m-auto shadow-lg"
+                                 style="border-radius: 20px;height: 80%;width: 80%;background-color: rgb(131, 150, 201);">
+                                <div class="row position-relative" style="height: 50%;">
+                                    <div class="col-12"><i
+                                            class="fas fa-user-cog start-0 end-0 top-0 bottom-0 m-auto position-absolute fs-1 text-white"
+                                            style="width: max-content;"></i></div>
+                                </div>
+                                <div class="row position-relative" style="height: 50%;">
+                                    <h3 style="position: absolute;top: 5%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Daily Sales</h3>
+                                    <p style="position: absolute;bottom: 15%;left: 0;right: 0;margin: auto;width: max-content;height: max-content;">
+                                        Rs. <span>1000.00</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-1 position-relative">
+                <div class="adminDashboardNav row position-absolute end-0 top-0 bottom-0 m-auto"
+                     style="width: 50%;height: 65%;">
+                    <div class="col-md-12 col-sm-12 position-relative">
+                        <div id="homeAdminDashboardNavBtn"
+                             class="iContainer position-absolute start-0 end-0 top-0 bottom-0 m-auto"><i
+                                class="fas fa-home"></i></div>
+                    </div>
+                    <div class="col-md-12 col-sm-3 position-relative">
+                        <div id="userDetailsAdminDashboardNavBtn"
+                             class="iContainer position-absolute start-0 end-0 top-0 bottom-0 m-auto"><i
+                                class="fas fa-users"></i></div>
+                    </div>
+                    <div class="col-md-12 col-sm-3 position-relative">
+                        <div id="itemsAdminDashboardNavBtn"
+                             class="iContainer position-absolute start-0 end-0 top-0 bottom-0 m-auto"><i
+                                class="fas fa-warehouse"></i></div>
+                    </div>
+                    <div class="col-md-12 col-sm-3 position-relative">
+                        <div id="logoutAdminDashboardNavBtn"
+                             class="iContainer position-absolute start-0 end-0 top-0 bottom-0 m-auto"><i
+                                class="fas fa-sign-out-alt text-white fs-3"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/jQuery/jquery-3.6.0.min.js"></script>
+<script src="assets/js/loginLogout.js"></script>
+<script src="assets/js/script.js"></script>
+<script src="model/tm/AddToCartTm.js"></script>
+<script src="util/Validator.js"></script>
+<script src="controller/CustomerController.js"></script>
+<script src="controller/ItemController.js"></script>
+<script src="controller/PlaceOrderController.js"></script>
+<script src="controller/OrderController.js"></script>
+<script src="controller/OrderDetailsController.js"></script>
+<script src="controller/CashierSignupFormController.js"></script>
+<script src="controller/AdminFormSignupController.js"></script>
+<script src="controller/ItemDetailFormController.js"></script>
+<script src="controller/SignupDetailsFormController.js"></script>
+<script src="util/SetBorderReset.js"></script>
+</body>
+
+</html>

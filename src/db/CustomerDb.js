@@ -1,1 +1,0 @@
-var customerArray = new Array();

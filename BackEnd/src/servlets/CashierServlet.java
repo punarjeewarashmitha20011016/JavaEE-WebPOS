@@ -62,31 +62,40 @@ public class CashierServlet extends HttpServlet {
                 JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
                 try {
                     ArrayList<CashierDTO> cashierDetails = cashierFormSignUpBO.getCashierDetails(dataSource);
-                    for (CashierDTO dto : cashierDetails
-                    ) {
-                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                        objectBuilder.add("id", dto.getId());
-                        objectBuilder.add("name", dto.getName());
-                        objectBuilder.add("nic", dto.getNic());
-                        objectBuilder.add("contactNo", dto.getContactNo());
-                        objectBuilder.add("userName", dto.getUsername());
-                        objectBuilder.add("password", dto.getPassword());
-                        objectBuilder.add("address", dto.getAddress());
+                    if (cashierDetails != null) {
+                        for (CashierDTO dto : cashierDetails
+                        ) {
+                            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                            objectBuilder.add("id", dto.getId());
+                            objectBuilder.add("name", dto.getName());
+                            objectBuilder.add("nic", dto.getNic());
+                            objectBuilder.add("contactNo", dto.getContactNo());
+                            objectBuilder.add("userName", dto.getUsername());
+                            objectBuilder.add("password", dto.getPassword());
+                            objectBuilder.add("address", dto.getAddress());
 
 
-                        objectBuilder.add("status", 200);
+                            objectBuilder.add("status", 200);
+                            objectBuilder.add("data", "");
+                            objectBuilder.add("message", "Cashier details generated successfully");
+                            arrayBuilder.add(objectBuilder.build());
+                        }
+                        writer.print(arrayBuilder.build());
+                    } else {
+                        objectBuilder.add("status", 400);
                         objectBuilder.add("data", "");
-                        objectBuilder.add("message", "Cashier details generated successfully");
+                        objectBuilder.add("message", "Cashier details generated unsuccessfully");
                         arrayBuilder.add(objectBuilder.build());
+                        writer.print(arrayBuilder.build());
                     }
-                    writer.print(arrayBuilder.build());
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                     resp.setStatus(200);
                     objectBuilder.add("status", 500);
                     objectBuilder.add("data", throwables.getLocalizedMessage());
                     objectBuilder.add("message", "Error");
-                    writer.print(objectBuilder.build());
+                    arrayBuilder.add(objectBuilder.build());
+                    writer.print(arrayBuilder.build());
                 }
                 break;
             case "ifCashierExists":

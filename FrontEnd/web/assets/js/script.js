@@ -132,6 +132,16 @@ passwordLoginId.keyup(function () {
 loginBtn.off('click');
 loginBtn.click(function () {
     console.log("login ek wd")
+    generateItemCode();
+    generateId();
+    generateCustomerId();
+    generateAdminId();
+    setDatToTheItemTable();
+    getOrderId();
+    setDataToTheCashierTable();
+    setDataToTheAdminTable();
+    setDataToCustomerTable();
+    setDataToItemComboBox();
     adminLogin();
     cashierLogin();
 
@@ -357,7 +367,6 @@ function adminLogin() {
         contentType: "application/json",
         success: function (resp) {
             if (resp.status == 200) {
-                setDataToTheAdminTable();
                 alert('success')
                 userNameLoginId.val("");
                 passwordLoginId.val("");

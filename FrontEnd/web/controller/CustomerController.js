@@ -22,13 +22,17 @@ var cusInputsArr = [cusId, cusName, cusContactNo, cusNic, cusAddress];
 
 var customerExistsInCustomer;
 
-generateCustomerId();
+$(document).ready(function (e) {
+    generateCustomerId();
+})
+
 $('#cusId,#cusName,#cusContactNo,#cusNic,#cusAddress').off('keydown');
 $('#cusId,#cusName,#cusContactNo,#cusNic,#cusAddress').keydown(function (e) {
     if (e.key == 'Tab') {
         e.preventDefault();
     }
 });
+cusId.off('keyup');
 cusId.keyup(function (e) {
     console.log("cusId keyUp")
     let index = 0;
@@ -39,7 +43,7 @@ cusId.keyup(function (e) {
         cusIdLbl.text("Please use the given format (CU-001)");
     }
 })
-
+cusName.off('keyup');
 cusName.keyup(function (e) {
     let index = 1;
     var cusNameLbl = $("#cusNameLabelInCustomers span");
@@ -51,7 +55,7 @@ cusName.keyup(function (e) {
         cusNameLbl.text("Please use the given format (Kamal Bandara)");
     }
 })
-
+cusContactNo.off('keyup');
 cusContactNo.keyup(function (e) {
     let index = 2;
     var cusContactLbl = $("#cusContactLabelInCustomers span");
@@ -61,7 +65,7 @@ cusContactNo.keyup(function (e) {
         cusContactLbl.text("Please use only 10 digits");
     }
 })
-
+cusNic.off('keyup');
 cusNic.keyup(function (e) {
     let index = 3;
     var cusNicLbl = $("#cusNicLabelInCustomers span");
@@ -71,7 +75,7 @@ cusNic.keyup(function (e) {
         cusNicLbl.text("Please use only valid Nic numbers");
     }
 })
-
+cusAddress.off('keyup');
 cusAddress.keyup(function (e) {
     let index = 4;
     var cusAddressLbl = $("#cusAddressLabelInCustomers span");
@@ -148,10 +152,18 @@ function setDataToCustomerTable() {
         contentType: "application/json",
         success: function (resp) {
             let arr = resp;
+            customerArray.splice(0, customerArray.length);
             $("#tblCus tbody tr").remove();
             for (let i = 0; i < arr.length; i++) {
+                customerArray.push(arr[i]);
                 if (arr[i].status == 200) {
                     tblCusBody.append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].id + "</td><td>" + arr[i].name + "</td><td>" + arr[i].nic + "</td><td>" + arr[i].contactNo + "</td><td>" + arr[i].address + "</td></tr>");
+                } else if (arr[i].status == 400) {
+                    $("#tblCus tbody tr").remove();
+                    return;
+                } else {
+                    $("#tblCus tbody tr").remove();
+                    return;
                 }
             }
         },

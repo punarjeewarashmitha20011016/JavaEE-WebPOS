@@ -41,7 +41,10 @@ $('#signUpId,#signUpName,#signUpNic,#signUpContactNo,#signUpUserName,#signUpPass
     }
 });
 
-generateId();
+$(document).ready(function (e) {
+    generateId();
+    setDataToTheCashierTable();
+})
 
 signUpId.off('keyup');
 signUpId.keyup(function (e) {
@@ -396,16 +399,21 @@ function setDataToTheCashierTable() {
         dataType: "json",
         contentType: "application/json",
         success: function (resp) {
-            if (resp.status == 200) {
-                let arr = resp;
-                cashierDetailsTable.children('tbody').children('tr').remove();
-                for (let i = 0; i < arr.length; i++) {
+            let arr = resp;
+            cashierArray.splice(0, cashierArray.length)
+            cashierDetailsTable.children('tbody').children('tr').remove();
+            for (let i = 0; i < arr.length; i++) {
+                cashierArray.push(arr[i]);
+                if (arr[i].status == 200) {
+                    console.log("Set data to cashier table getAll method - " + arr[i].name)
                     cashierDetailsTable.children('tbody').append('<tr><td>' + (i + 1) + '</td><td>' + arr[i].id + '</td><td>' + arr[i].name + '</td><td>' + arr[i].nic + '</td><td>' + arr[i].contactNo + '</td><td>' + arr[i].userName + '</td><td>' + arr[i].password + '</td><td>' + arr[i].address + '</td></tr>');
+                } else if (arr[i].status == 400) {
+                    cashierDetailsTable.children('tbody').children('tr').remove();
+                    return;
+                } else {
+                    cashierDetailsTable.children('tbody').children('tr').remove();
+                    return;
                 }
-            } else if (resp.status == 400) {
-                alert(resp.message);
-            } else {
-                alert(resp.data);
             }
         }
     })

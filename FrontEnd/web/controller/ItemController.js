@@ -21,7 +21,29 @@ var itemDiscountPattern = /^[0-9.]{1,}$/;
 
 var itemsArray = [itemCodeInItems, itemDescriptionInItems, itemQtyInItems, itemBuyingPriceInItems, itemUnitPriceInItems, itemDiscountInItems];
 
-itemCodeInItems.val(generateItemCode());
+generateItemCode();
+
+function generateItemCode() {
+    $.ajax({
+        url: "http://localhost:8080/WebPosEE/item?option=generateItemCode",
+        method: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (resp) {
+            if (resp.status == 200) {
+                console.log("Item Code in items - " + resp.itemCode)
+                itemCodeInItems.val(resp.itemCode);
+            } else if (status == 400) {
+                alert(resp.message);
+            } else {
+                alert(resp.data);
+            }
+        },
+        error: function (db, textStatus, error) {
+            alert(error);
+        }
+    })
+}
 
 var checkIfItemExistsInItems;
 
@@ -112,10 +134,15 @@ saveItemBtn.click(function () {
         itemDiscount: discountInItems
     }
 
-    if (confirm("Do you want to save this item" == true)) {
+    if (confirm("Do you want to save this item") == true) {
+        console.log(checkIfItemExistsInItems + " - check if item exists bool 1");
         checkIfItemExists();
-        if (checkIfItemExistsInItems == false) {
-            console.log(checkIfItemExistsInItems + " - check if item exists bool");
+        if (checkIfItemExistsInItems == true) {
+            clearFieldsInItems();
+            generateItemCode();
+            setBorderToResetInItem();
+        } else {
+            console.log(checkIfItemExistsInItems + " - check if item exists bool 2");
             $.ajax({
                 url: "http://localhost:8080/WebPosEE/item",
                 method: "POST",
@@ -148,10 +175,6 @@ saveItemBtn.click(function () {
                     setBorderToResetInItem();
                 }
             })
-        } else {
-            clearFieldsInItems();
-            generateItemCode();
-            setBorderToResetInItem();
         }
     }
 });
@@ -163,13 +186,23 @@ function setDatToTheItemTable() {
         dataType: "json",
         contentType: "application/json",
         success: function (resp) {
-            if (resp.status == 200) {
-                let arr = resp;
-                $(".ManageItems .container-fluid div:nth-child(3) div table tbody tr").remove();
-                itemDetailsTable.children('tbody').children('tr').remove();
-                for (let i = 0; i < arr.length; i++) {
-                    tBodyInItems.append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode() + "</td><td>" + arr[i].itemDescription() + "</td><td>" + arr[i].itemQty() + "</td><td>" + arr[i].itemBuyingPrice() + "</td><td>" + arr[i].itemUnitPrice() + "</td><td>" + arr[i].itemDiscount() + "</td></tr>");
-                    itemDetailsTable.children('tbody').append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode() + "</td><td>" + arr[i].itemDescription() + "</td><td>" + arr[i].itemQty() + "</td><td>" + arr[i].itemBuyingPrice() + "</td><td>" + arr[i].itemUnitPrice() + "</td><td>" + arr[i].itemDiscount() + "</td></tr>");
+            let arr = resp;
+            itemArray.splice(0, itemArray.length);
+            $(".ManageItems .container-fluid div:nth-child(3) div table tbody tr").remove();
+            itemDetailsTable.children('tbody').children('tr').remove();
+            for (let i = 0; i < arr.length; i++) {
+                itemArray.push(arr[i]);
+                if (arr[i].status == 200) {
+                    tBodyInItems.append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode + "</td><td>" + arr[i].itemDescription + "</td><td>" + arr[i].itemQty + "</td><td>" + arr[i].itemBuyingPrice + "</td><td>" + arr[i].itemUnitPrice + "</td><td>" + arr[i].itemDiscount + "</td></tr>");
+                    itemDetailsTable.children('tbody').append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode + "</td><td>" + arr[i].itemDescription + "</td><td>" + arr[i].itemQty + "</td><td>" + arr[i].itemBuyingPrice + "</td><td>" + arr[i].itemUnitPrice + "</td><td>" + arr[i].itemDiscount + "</td></tr>");
+                } else if (arr[i].status == 400) {
+                    tBodyInItems.append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode + "</td><td>" + arr[i].itemDescription + "</td><td>" + arr[i].itemQty + "</td><td>" + arr[i].itemBuyingPrice + "</td><td>" + arr[i].itemUnitPrice + "</td><td>" + arr[i].itemDiscount + "</td></tr>");
+                    itemDetailsTable.children('tbody').append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode + "</td><td>" + arr[i].itemDescription + "</td><td>" + arr[i].itemQty + "</td><td>" + arr[i].itemBuyingPrice + "</td><td>" + arr[i].itemUnitPrice + "</td><td>" + arr[i].itemDiscount + "</td></tr>");
+                    return;
+                } else {
+                    tBodyInItems.append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode + "</td><td>" + arr[i].itemDescription + "</td><td>" + arr[i].itemQty + "</td><td>" + arr[i].itemBuyingPrice + "</td><td>" + arr[i].itemUnitPrice + "</td><td>" + arr[i].itemDiscount + "</td></tr>");
+                    itemDetailsTable.children('tbody').append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].itemCode + "</td><td>" + arr[i].itemDescription + "</td><td>" + arr[i].itemQty + "</td><td>" + arr[i].itemBuyingPrice + "</td><td>" + arr[i].itemUnitPrice + "</td><td>" + arr[i].itemDiscount + "</td></tr>");
+                    return;
                 }
             }
         },
@@ -335,25 +368,6 @@ function clearFieldsInItems() {
     itemDiscountInItems.val("");
 }
 
-function generateItemCode() {
-    $.ajax({
-        url: "http://localhost:8080/WebPosEE/item?option=generateItemCode",
-        method: "GET",
-        success: function (resp) {
-            if (resp.status == 200) {
-                itemCodeInItems.val(resp.itemCode);
-            } else if (status == 400) {
-                alert(resp.message);
-            } else {
-                alert(resp.data);
-            }
-        },
-        error: function (db, textStatus, error) {
-            alert(error);
-        }
-    })
-}
-
 function setBorderToResetInItem() {
     setBorderToDefault(itemsArray);
 }
@@ -366,12 +380,15 @@ function checkIfItemExists() {
     $.ajax({
         url: "http://localhost:8080/WebPosEE/item?option=ifItemExists&itemCode=" + itemCodeInItems.val(),
         method: "GET",
+        dataType: "json",
+        content: "application/json",
         success: function (resp) {
             if (resp.status == 200) {
+                console.log("Checked if exists - true")
                 setBoolToVariableCheck(resp.bool);
             } else if (status == 400) {
+                console.log("Checked if exists - true")
                 setBoolToVariableCheck(resp.bool);
-                alert(resp.message);
             } else {
                 alert(resp.data);
             }

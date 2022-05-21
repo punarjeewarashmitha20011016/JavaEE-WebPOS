@@ -52,6 +52,6 @@ public class ItemFormBOImpl implements ItemFormBO {
     @Override
     public ItemDTO searchItem(DataSource dataSource, String itemCode) throws SQLException {
         Item i = itemDao.search(itemCode, dataSource);
-        return new ItemDTO(i.getItemCode(), i.getItemDescription(), i.getItemQty(), i.getItemBuyingPrice(), i.getItemUnitPrice(), i.getItemDiscount());
+        return i != null ? new ItemDTO(i.getItemCode(), i.getItemDescription(), i.getItemQty(), i.getItemBuyingPrice(), i.getItemUnitPrice(), i.getItemDiscount()) : null;
     }
 }

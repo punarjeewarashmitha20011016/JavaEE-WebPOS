@@ -46,12 +46,12 @@ public class CustomerFormBOImpl implements CustomerFormBO {
     @Override
     public CustomerDTO searchCustomer(DataSource dataSource, String customerId) throws SQLException {
         Customer search = customerDao.search(customerId, dataSource);
-        return new CustomerDTO(search.getId(),search.getName(),search.getContactNo(),search.getNic(),search.getAddress());
+        return search != null ? new CustomerDTO(search.getId(), search.getName(), search.getContactNo(), search.getNic(), search.getAddress()) : null;
     }
 
     @Override
     public boolean ifCustomerExists(DataSource dataSource, String customerId) throws SQLException {
-        return customerDao.checkIfCustomerExists(dataSource,customerId);
+        return customerDao.checkIfCustomerExists(dataSource, customerId);
     }
 
     @Override

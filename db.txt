@@ -50,7 +50,7 @@ drop table if exists `Order`;
 create table if not exists `Order`(
     orderId VARCHAR(6),
     customerId VARCHAR(6),
-    orderDate DATE,
+    orderDate VARCHAR(10),
     orderTime VARCHAR(20),
     discount DOUBLE,
     totalAmount DOUBLE,

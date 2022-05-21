@@ -16,7 +16,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 @WebServlet(urlPatterns = "/order")
@@ -31,19 +30,43 @@ public class OrderServlet extends HttpServlet {
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject jsonObject = reader.readObject();
         String orderId = jsonObject.getString("orderId");
-        String customerId = jsonObject.getString("customerId");
-        LocalDate orderDate = LocalDate.parse(jsonObject.getString("orderDate"));
+        System.out.println(orderId + " - Order Id");
+        String checkCustomerId = jsonObject.getString("customerId");
+        String customerId;
+        if (checkCustomerId.length() == 0) {
+            customerId = null;
+        } else {
+            customerId = checkCustomerId;
+        }
+        String orderDate = jsonObject.getString("orderDate");
         String orderTime = jsonObject.getString("orderTime");
-        double orderDiscount = Double.parseDouble(jsonObject.getString("orderDiscount"));
-        double orderTotal = Double.parseDouble(jsonObject.getString("orderTotal"));
+
+        double orderDiscount = jsonObject.getInt("orderDiscount");
+
+        String checkOrderTotal = jsonObject.getString("orderTotal");
+        double orderTotal = 0;
+        if (checkOrderTotal == null) {
+            orderTotal = 0;
+        } else {
+            orderTotal = Double.parseDouble(jsonObject.getString("orderTotal"));
+        }
+
         JsonArray orderDetails = jsonObject.getJsonArray("orderDetails");
         ArrayList<OrderDetailsDTO> getOrderDetails = new ArrayList<>();
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
         PrintWriter writer = resp.getWriter();
+
         for (int i = 0; i < orderDetails.size(); i++) {
-            getOrderDetails.add(new OrderDetailsDTO(orderDetails.getString(i, "orderId"), orderDetails.getString(i, "itemCode"), orderDetails.getString(i, "itemDescription"), Integer.parseInt(orderDetails.getString(i, "itemQty")), Double.parseDouble(orderDetails.getString(i, "itemPrice")), Double.parseDouble(orderDetails.getString(i, "itemDiscount")), Double.parseDouble(orderDetails.getString(i, "itemTotal"))));
+            getOrderDetails.add(new OrderDetailsDTO(orderDetails.getJsonObject(i).getJsonString("orderId").getString(),
+                    orderDetails.getJsonObject(i).getJsonString("itemCode").getString(),
+                    orderDetails.getJsonObject(i).getJsonString("itemDescription").getString(),
+                    Integer.parseInt(orderDetails.getJsonObject(i).getString("itemQty")),
+                    Double.parseDouble(orderDetails.getJsonObject(i).getString("itemPrice")),
+                    Double.parseDouble(orderDetails.getJsonObject(i).getString("itemDiscount")),
+                    Double.parseDouble(orderDetails.getJsonObject(i).getJsonNumber("itemTotal").toString())));
         }
 
+        System.out.println(getOrderDetails.toString());
         try {
             if (placeOrderBO.purchaseOrder(dataSource, new OrderDTO(orderId, customerId, orderDate, orderTime, orderDiscount, orderTotal, getOrderDetails))) {
                 resp.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -87,7 +110,7 @@ public class OrderServlet extends HttpServlet {
                         objectBuilder.add("status", 200);
                         objectBuilder.add("data", "");
                         objectBuilder.add("message", "Order ID generated successfully");
-                        objectBuilder.add("orderId", id);
+                        objectBuilder.add("orderIdGenerated", id);
                         writer.print(objectBuilder.build());
                     } else {
                         objectBuilder.add("status", 400);
@@ -131,6 +154,7 @@ public class OrderServlet extends HttpServlet {
                         objectBuilder.add("message", "Order details generated unsuccessful");
 
                         arrayBuilder.add(objectBuilder.build());
+                        writer.print(arrayBuilder.build());
                     }
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
@@ -139,6 +163,7 @@ public class OrderServlet extends HttpServlet {
                     objectBuilder.add("data", throwables.getLocalizedMessage());
                     objectBuilder.add("message", "Error");
                     arrayBuilder.add(objectBuilder.build());
+                    writer.print(arrayBuilder.build());
                 }
                 break;
             case "searchOrder":

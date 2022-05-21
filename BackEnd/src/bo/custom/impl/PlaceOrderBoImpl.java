@@ -23,28 +23,30 @@ public class PlaceOrderBoImpl implements PlaceOrderBO {
 
     @Override
     public boolean purchaseOrder(DataSource dataSource, OrderDTO dto) throws SQLException {
+        Connection connection = dataSource.getConnection();
         boolean exists = orderDao.ifOrderExists(dataSource, dto.getOrderId());
-        if (exists) {
+        if (exists == true) {
             return false;
         }
-        Connection connection = dataSource.getConnection();
         connection.setAutoCommit(false);
         Order order = new Order(dto.getOrderId(), dto.getCustomerId(), dto.getOrderDate(), dto.getOrderTime(), dto.getDiscount(), dto.getTotalAmount());
-
+        System.out.println(dto.getOrderId());
         if (!orderDao.save(order, dataSource)) {
             connection.rollback();
             connection.setAutoCommit(true);
             return false;
         }
+        System.out.println("Get order details - " + dto.getOrderDetailsDTO().toString());
         for (OrderDetailsDTO d : dto.getOrderDetailsDTO()
         ) {
+            System.out.println("Item discount - " + d.getItemDiscount());
             OrderDetails orderDetails = new OrderDetails(d.getOrderId(), d.getItemCode(), d.getItemDescription(), d.getItemQty(), d.getItemPrice(), d.getItemDiscount(), d.getTotal());
             if (!orderDetailsDao.save(orderDetails, dataSource)) {
                 connection.rollback();
                 connection.setAutoCommit(true);
                 return false;
             }
-            Item search = itemDao.search(orderDetails.getOrderId(), dataSource);
+            Item search = itemDao.search(orderDetails.getItemCode(), dataSource);
             search.setItemQty(search.getItemQty() - orderDetails.getItemQty());
             if (!itemDao.update(search, dataSource)) {
                 connection.rollback();
@@ -81,13 +83,13 @@ public class PlaceOrderBoImpl implements PlaceOrderBO {
     @Override
     public OrderDTO searchOrder(DataSource dataSource, String orderId) throws SQLException {
         Order search = orderDao.search(orderId, dataSource);
-        return new OrderDTO(search.getOrderId(),search.getCustomerId(),search.getOrderDate(),search.getOrderTime(),search.getDiscount(),search.getTotalAmount());
+        return new OrderDTO(search.getOrderId(), search.getCustomerId(), search.getOrderDate(), search.getOrderTime(), search.getDiscount(), search.getTotalAmount());
     }
 
     @Override
     public OrderDetailsDTO searchOrderDetails(DataSource dataSource, String orderId) throws SQLException {
         OrderDetails search = orderDetailsDao.search(orderId, dataSource);
-        return new OrderDetailsDTO(search.getOrderId(),search.getItemCode(),search.getItemDescription(),search.getItemQty(),search.getItemPrice(),search.getItemDiscount(),search.getTotal());
+        return new OrderDetailsDTO(search.getOrderId(), search.getItemCode(), search.getItemDescription(), search.getItemQty(), search.getItemPrice(), search.getItemDiscount(), search.getTotal());
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.Date;
 public class Order {
     private String orderId;
     private String customerId;
-    private LocalDate orderDate;
+    private String orderDate;
     private String orderTime;
     private double discount;
     private double totalAmount;
@@ -16,7 +16,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(String orderId, String customerId, LocalDate orderDate, String orderTime, double discount, double totalAmount) {
+    public Order(String orderId, String customerId, String orderDate, String orderTime, double discount, double totalAmount) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -25,7 +25,7 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-    public Order(String orderId, String customerId, LocalDate orderDate, String orderTime, double discount, double totalAmount, ArrayList<OrderDetails>details) {
+    public Order(String orderId, String customerId, String orderDate, String orderTime, double discount, double totalAmount, ArrayList<OrderDetails>details) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -51,11 +51,11 @@ public class Order {
         this.customerId = customerId;
     }
 
-    public LocalDate getOrderDate() {
+    public String getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDate orderDate) {
+    public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
 

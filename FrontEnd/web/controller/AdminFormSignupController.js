@@ -40,7 +40,10 @@ $('#signUpAdminId,#signUpAdminName,#signUpAdminNic,#signUpAdminContactNo,#signUp
     }
 });
 
-generateAdminId();
+$(document).ready(function (e) {
+    generateAdminId();
+    setDataToTheAdminTable();
+})
 
 signUpAdminId.off('keyup');
 signUpAdminId.keyup(function (e) {
@@ -391,10 +394,23 @@ function setDataToTheAdminTable() {
         contentType: "application/json",
         method: "GET",
         success: function (resp) {
-            adminDetailsTable.children('tbody').children('tr').remove();
-            for (let i = 0; i < resp.length; i++) {
-                console.log(resp[i].adminName)
-                adminDetailsTable.children('tbody').append('<tr><td>' + (i + 1) + '</td><td>' + resp[i].adminId + '</td><td>' + resp[i].adminName + '</td><td>' + resp[i].adminNic + '</td><td>' + resp[i].adminContactNo + '</td><td>' + resp[i].adminUserName + '</td><td>' + resp[i].adminPassword + '</td><td>' + resp[i].adminAddress + '</td></tr>');
+            let arr = resp;
+            adminArray.splice(0, adminArray.length);
+            for (let i = 0; i < arr.length; i++) {
+                adminArray.push(arr[i]);
+                adminDetailsTable.children('tbody').children('tr').remove();
+                if (arr[i].status == 200) {
+                    for (let i = 0; i < resp.length; i++) {
+                        console.log(resp[i].adminName)
+                        adminDetailsTable.children('tbody').append('<tr><td>' + (i + 1) + '</td><td>' + arr[i].adminId + '</td><td>' + arr[i].adminName + '</td><td>' + arr[i].adminNic + '</td><td>' + arr[i].adminContactNo + '</td><td>' + arr[i].adminUserName + '</td><td>' + arr[i].adminPassword + '</td><td>' + arr[i].adminAddress + '</td></tr>');
+                    }
+                } else if (arr[i].status == 400) {
+                    adminDetailsTable.children('tbody').children('tr').remove();
+                    return;
+                } else {
+                    adminDetailsTable.children('tbody').children('tr').remove();
+                    return;
+                }
             }
         },
         error: function (ob, textstatus, error) {

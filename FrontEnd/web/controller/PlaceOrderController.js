@@ -36,9 +36,13 @@ let rowNoCart = 1;
 
 var placeOrderTextFieldsToValidate = [cusIdHome, itemQtyOnHandHome, itemDiscountHome, orderDiscount, orderCashReceived];
 
-var orderId = undefined;
+var orderId = "";
+$(document).ready(function (e) {
+    setDatToTheItemTable();
+    setDataToCustomerTable();
+    getOrderId();
+})
 
-orderId = getOrderId();
 
 $('#customerIdHome,#customerNameHome,#customerAddressHome,#customerTelHome,#itemCodeHome,#itemDescriptionHome,#itemQtyHome,#itemUnitPriceHome,#itemQtyOnHandHome,#itemDiscountHome').off('keydown');
 $('#customerIdHome,#customerNameHome,#customerAddressHome,#customerTelHome,#itemCodeHome,#itemDescriptionHome,#itemQtyHome,#itemUnitPriceHome,#itemQtyOnHandHome,#itemDiscountHome').keydown(function (e) {
@@ -92,12 +96,12 @@ itemCodeHome.off('click')
 itemCodeHome.click(function () {
     for (let i = 0; i < itemArray.length; i++) {
         let checkItemCodeInCombo = itemCodeHome.children('option:selected').text();
-        if (itemArray[i].getItemCode() == checkItemCodeInCombo) {
-            itemCodeInHome = itemArray[i].getItemCode()
-            itemDescriptionHome.val(itemArray[i].getItemDescription());
-            itemQtyHome.val(itemArray[i].getItemQty());
-            itemUnitPriceHome.val(itemArray[i].getItemUnitPrice());
-            itemDiscountHome.val(itemArray[i].getItemDiscount())
+        if (itemArray[i].itemCode == checkItemCodeInCombo) {
+            itemCodeInHome = itemArray[i].itemCode;
+            itemDescriptionHome.val(itemArray[i].itemDescription);
+            itemQtyHome.val(itemArray[i].itemQty);
+            itemUnitPriceHome.val(itemArray[i].itemUnitPrice);
+            itemDiscountHome.val(itemArray[i].itemDiscount);
             return;
         }
     }
@@ -107,7 +111,7 @@ function setDataToItemComboBox() {
     $("#itemCodeHome option").remove();
     for (let i = 0; i < itemArray.length; i++) {
         var newOption = $('<option>');
-        newOption.attr('value', (i + 1)).text(itemArray[i].getItemCode());
+        newOption.attr('value', (i + 1)).text(itemArray[i].itemCode);
         itemCodeHome.append(newOption);
     }
 }
@@ -116,9 +120,11 @@ function getOrderId() {
     $.ajax({
         url: "http://localhost:8080/WebPosEE/order?option=generateOrderId",
         method: "GET",
+        dataType: "json",
+        contentType: "application/json",
         success: function (resp) {
             if (resp.status == 200) {
-                orderIdHome.val(resp.orderId);
+                orderIdHome.val(resp.orderIdGenerated);
             } else if (resp.status == 400) {
                 alert(resp.message);
             } else {
@@ -212,11 +218,12 @@ addToCartBtn.click(function () {
         let time = dt.getHours() + "." + dt.getMinutes() + "." + dt.getSeconds();
 
         /*============================*/
-
+        orderId = orderIdHome.val();
         var orderDetailsArr = new Array();
         for (let i = 0; i < addToCartList.length; i++) {
+            console.log(orderId + " - purchase btn")
             let arr = {
-                orderId: orderId,
+                orderId: orderIdHome.val(),
                 itemCode: addToCartList[i].getItemCode(),
                 itemDescription: addToCartList[i].getItemDescription(),
                 itemQty: addToCartList[i].getItemQty(),
@@ -226,53 +233,56 @@ addToCartBtn.click(function () {
             }
             orderDetailsArr.push(arr);
         }
+        console.log(orderIdHome.val() + " -ORDER ID")
         var order = {
-            orderId: orderId,
+            orderId: orderIdHome.val(),
             customerId: cusIdHome.val(),
             orderDate: date,
             orderTime: time,
-            orderDiscount: orderDiscount.val(),
+            orderDiscount: orderDisc,
             orderTotal: orderTotal.val(),
             orderDetails: orderDetailsArr
         }
-
-        if (confirm("Do you want to place this order") == true) {
-            $.ajax({
-                url: "http://localhost:8080/WebPosEE/order",
-                method: "POST",
-                dataType: "json",
-                contentType: "application/json",
-                data: JSON.stringify(order),
-                success: function (resp) {
-                    if (resp.status == 200) {
-                        deducatQuantityOfItemsOfPurchased(addToCartList)
-                        clearFieldsInHomeAfterPurchase();
-                        getOrderId();
-                        setDatToTheItemTable();
-                        clearCart()
-                        setDataToOrderTable();
-                        setPlaceOrderFormBordersReset();
-                    } else if (resp.status == 400) {
-                        alert(resp.message);
-                        clearFieldsInHomeAfterPurchase();
-                        setPlaceOrderFormBordersReset();
-                    } else {
-                        alert(resp.data);
+        purchaseBtn.click(function () {
+            if (confirm("Do you want to place this order") == true) {
+                $.ajax({
+                    url: "http://localhost:8080/WebPosEE/order",
+                    method: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(order),
+                    success: function (resp) {
+                        if (resp.status == 200) {
+                            alert("Order Placed Successfully")
+                            deducatQuantityOfItemsOfPurchased(addToCartList)
+                            clearFieldsInHomeAfterPurchase();
+                            getOrderId();
+                            setDatToTheItemTable();
+                            setDataToOrderTable();
+                            clearCart();
+                            setPlaceOrderFormBordersReset();
+                        } else if (resp.status == 400) {
+                            alert(resp.message);
+                            clearFieldsInHomeAfterPurchase();
+                            setPlaceOrderFormBordersReset();
+                        } else {
+                            alert(resp.data);
+                            clearFieldsInHomeAfterPurchase();
+                            setPlaceOrderFormBordersReset();
+                        }
+                    },
+                    error: function (ob, textStatus, error) {
+                        alert(error)
                         clearFieldsInHomeAfterPurchase();
                         setPlaceOrderFormBordersReset();
                     }
-                },
-                error: function (ob, textStatus, error) {
-                    alert(error)
-                    clearFieldsInHomeAfterPurchase();
-                    setPlaceOrderFormBordersReset();
-                }
-            })
-        } else {
-            return;
-        }
-        clearSelectedRowFromTheCart();
-        discardOrder();
+                })
+            } else {
+                return;
+            }
+            clearSelectedRowFromTheCart();
+            discardOrder();
+        })
     }
 )
 
@@ -311,47 +321,26 @@ function ifItemIsExistsInCart(itemCode) {
 }
 
 function ifDiscountIsExistsForAnItem(itemCode) {
-    $.ajax({
-        url: "http://localhost:8080/WebPosEE/item?option=getAll",
-        dataType: "json",
-        contentType: "application/json",
-        method: "GET",
-        success: function (resp) {
-            if (resp.status == 200) {
-                $.ajax({
-                    url: "http://localhost:8080/WebPosEE/item?option=getAll",
-                    dataType: "json",
-                    contentType: "application/json",
-                    method: "GET",
-                    success: function (resp) {
-                        let itemArray = resp;
-                        let check = undefined;
-                        for (let i = 0; i < itemArray.length; i++) {
-                            if (itemArray[i].itemCode == itemCode) {
-                                if (itemArray[i].itemDiscount != 0) {
-                                    check = true;
-                                    returnIfDiscountIsExistsForAnItemFunction(check);
-                                } else {
-                                    check = false;
-                                    returnIfDiscountIsExistsForAnItemFunction(check);
-                                }
-                            }
-                        }
-                    },
-                    error: function (ob, textStatus, error) {
-                        alert(error);
+    for (let i = 0; i < itemArray.length; i++) {
+        if (itemArray[i].status == 200) {
+            let check = undefined;
+            for (let i = 0; i < itemArray.length; i++) {
+                if (itemArray[i].itemCode == itemCode) {
+                    if (itemArray[i].itemDiscount != 0) {
+                        check = true;
+                        returnIfDiscountIsExistsForAnItemFunction(check);
+                    } else {
+                        check = false;
+                        returnIfDiscountIsExistsForAnItemFunction(check);
                     }
-                });
-            } else if (resp.status == 400) {
-                alert(resp.message);
-            } else {
-                alert(resp.data);
+                }
             }
-        },
-        error: function (ob, textStatus, error) {
-            alert(error);
+        } else if (itemArray[i].status == 400) {
+            alert(itemArray[i].message);
+        } else {
+            alert(itemArray[i].data);
         }
-    });
+    }
 }
 
 function returnIfDiscountIsExistsForAnItemFunction(bool) {
@@ -370,58 +359,54 @@ function checkIfAddToCartListHasExistingItem(itemCode) {
 var returnIfDiscountIsExistsForAnItem;
 
 function calculateSingleItemPrice(itemCode, qtyOnHand) {
-    $.ajax({
-        url: "http://localhost:8080/WebPosEE/item?option=getAll",
-        dataType: "json",
-        contentType: "application/json",
-        method: "GET",
-        success: function (resp) {
-            ifDiscountIsExistsForAnItem(itemCode);
-            let ifDiscountAddedForAnExistingAddedItem = returnIfDiscountIsExistsForAnItem;
-            let discount = undefined;
-            let total = undefined;
-            let qtyOnHandOnCalc = parseInt(qtyOnHand);
-            if (resp.status == 200) {
-                let itemArray = resp;
-                for (let i = 0; i < itemArray.length; i++) {
-                    if (itemArray[i].itemCode == itemCode) {
-                        let unitPrice = parseFloat(itemArray[i].itemUnitPrice);
-                        let indexOfItemCodeExistsInAddToCart = checkIfAddToCartListHasExistingItem(itemCode);
-                        if (indexOfItemCodeExistsInAddToCart == -1) {
-                            if (ifDiscountAddedForAnExistingAddedItem == true) {
-                                for (let j = 0; j < itemArray.length; j++) {
-                                    if (itemArray[i].itemCode == itemCode) {
-                                        let discountInPercentageForGivenItemCode = parseFloat(itemArray[i].itemDiscount);
-                                        let itemUnitPriceForItemCode = parseFloat(itemArray[i].itemUnitPrice);
-                                        let discountedPrice = (discountInPercentageForGivenItemCode / 100) * (parseFloat(itemUnitPriceForItemCode * qtyOnHandOnCalc));
-                                        total = itemUnitPriceForItemCode - discountedPrice;
-                                    }
-                                }
-                                returnTotalFunction(total);
-                            } else {
-                                total = unitPrice * qtyOnHandOnCalc;
-                                returnTotalFunction(total);
+    ifDiscountIsExistsForAnItem(itemCode);
+    let ifDiscountAddedForAnExistingAddedItem = returnIfDiscountIsExistsForAnItem;
+    let discount = undefined;
+    let total = undefined;
+    let qtyOnHandOnCalc = parseInt(qtyOnHand);
+    for (let i = 0; i < itemArray.length; i++) {
+        if (itemArray[i].status == 200) {
+            if (itemArray[i].itemCode == itemCode) {
+                let unitPrice = parseFloat(itemArray[i].itemUnitPrice);
+                let indexOfItemCodeExistsInAddToCart = checkIfAddToCartListHasExistingItem(itemCode);
+                if (indexOfItemCodeExistsInAddToCart == -1) {
+                    if (ifDiscountAddedForAnExistingAddedItem == true) {
+                        for (let j = 0; j < itemArray.length; j++) {
+                            if (itemArray[j].itemCode == itemCode) {
+                                let discountInPercentageForGivenItemCode = parseFloat(itemArray[j].itemDiscount);
+                                let itemUnitPriceForItemCode = parseFloat(itemArray[j].itemUnitPrice);
+                                let discountedPrice = (discountInPercentageForGivenItemCode / 100) * (parseFloat(itemUnitPriceForItemCode * qtyOnHandOnCalc));
+                                total = itemUnitPriceForItemCode - discountedPrice;
                             }
-                        } else {
-                            for (let j = 0; j < addToCartList.length; j++) {
-                                if (addToCartList[i].getItemCode() == itemCode) {
-                                    let alreadyAddedDiscountedPrice = parseFloat(addToCartList[i].getTotalAmount());
-                                    let discountedPrice = (discount / 100) * (parseFloat(addToCartList[i].getItemPrice() * (parseInt(addToCartList[i].getItemQty()))));
-                                    let removedDiscountOfPreviouslyAdded = alreadyAddedDiscountedPrice + discountedPrice
-                                    let reCalculatedDiscount = (discount / 100) * (removedDiscountOfPreviouslyAdded * qtyOnHandOnCalc);
-                                    total = itemArray[i].getItemUnitPrice() - reCalculatedDiscount;
-                                }
-                            }
-                            returnTotalFunction(total);
+                        }
+                        returnTotalFunction(total);
+                        return;
+                    } else {
+                        total = unitPrice * qtyOnHandOnCalc;
+                        returnTotalFunction(total);
+                        return;
+                    }
+                } else {
+                    for (let j = 0; j < addToCartList.length; j++) {
+                        if (addToCartList[j].getItemCode() == itemCode) {
+                            let alreadyAddedDiscountedPrice = parseFloat(addToCartList[j].getTotalAmount());
+                            let discountedPrice = (discount / 100) * (parseFloat(addToCartList[j].getItemPrice() * (parseInt(addToCartList[j].getItemQty()))));
+                            let removedDiscountOfPreviouslyAdded = alreadyAddedDiscountedPrice + discountedPrice
+                            let reCalculatedDiscount = (discount / 100) * (removedDiscountOfPreviouslyAdded * qtyOnHandOnCalc);
+                            total = itemArray[i].itemUnitPrice - reCalculatedDiscount;
                         }
                     }
+                    returnTotalFunction(total);
+                    return;
                 }
             }
-        },
-        error: function (ob, textStatus, error) {
-            alert(error);
+
+        } else if (itemArray[i].status == 400) {
+            alert(itemArray[i].message);
+        } else {
+            alert(itemArray[i].data);
         }
-    })
+    }
 }
 
 function returnTotalFunction(total) {
@@ -449,53 +434,39 @@ function clearFieldsInHomeAfterPurchase() {
 }
 
 function deducatQuantityOfItemsOfPurchased(addToCartList) {
-    $.ajax({
-        url: "http://localhost:8080/WebPosEE/item?option=getAll",
-        dataType: "json",
-        contentType: "application/json",
-        method: "GET",
-        success: function (resp) {
-            if (resp.status == 200) {
-                let itemArray = resp;
-                for (let i = 0; i < itemArray.length; i++) {
-                    for (let j = 0; j < addToCartList.length; j++) {
-                        if (itemArray[i].itemCode == addToCartList[j].getItemCode()) {
-                            let arr = {
-                                itemCode: itemArray[i].itemCode,
-                                itemDescription: itemArray[i].itemDescription,
-                                itemQty: itemArray[i].itemQty - addToCartList[j].getItemQty(),
-                                itemBuyingPrice: itemArray[i].itemBuyingPrice,
-                                itemUnitPrice: itemArray[i].itemUnitPrice,
-                                itemDiscount: itemArray[i].itemDiscount
-                            }
-                            $.ajax({
-                                url: "http://localhost/WebPosEE/item",
-                                method: "PUT",
-                                dataType: "json",
-                                contentType: "application/json",
-                                data: JSON.stringify(arr),
-                                success: function (resp) {
-                                    if (resp.status == 200) {
-                                        alert('Item Updated');
-                                    } else if (resp.status == 400) {
-                                        alert(resp.message);
-                                    } else {
-                                        alert(resp.data);
-                                    }
-                                },
-                                error: function (ob, textStatus, error) {
-                                    alert(error);
-                                }
-                            })
-                        }
-                    }
+    for (let i = 0; i < itemArray.length; i++) {
+        for (let j = 0; j < addToCartList.length; j++) {
+            if (itemArray[i].itemCode == addToCartList[j].getItemCode()) {
+                let arr = {
+                    itemCode: itemArray[i].itemCode,
+                    itemDescription: itemArray[i].itemDescription,
+                    itemQty: itemArray[i].itemQty - addToCartList[j].getItemQty(),
+                    itemBuyingPrice: itemArray[i].itemBuyingPrice,
+                    itemUnitPrice: itemArray[i].itemUnitPrice,
+                    itemDiscount: itemArray[i].itemDiscount
                 }
+                $.ajax({
+                    url: "http://localhost/WebPosEE/item",
+                    method: "PUT",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(arr),
+                    success: function (resp) {
+                        if (resp.status == 200) {
+                            alert('Item Updated');
+                        } else if (resp.status == 400) {
+                            alert(resp.message);
+                        } else {
+                            alert(resp.data);
+                        }
+                    },
+                    error: function (ob, textStatus, error) {
+                        alert(error);
+                    }
+                })
             }
-        },
-        error: function (ob, textStatus, error) {
-            alert(error);
         }
-    })
+    }
 }
 
 function disableAllBtns() {

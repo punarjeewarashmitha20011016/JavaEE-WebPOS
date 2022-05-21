@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class OrderDTO {
     private String orderId;
     private String customerId;
-    private LocalDate orderDate;
+    private String orderDate;
     private String orderTime;
     private double discount;
     private double totalAmount;
@@ -15,7 +15,7 @@ public class OrderDTO {
     public OrderDTO() {
     }
 
-    public OrderDTO(String orderId, String customerId, LocalDate orderDate, String orderTime, double discount, double totalAmount) {
+    public OrderDTO(String orderId, String customerId, String orderDate, String orderTime, double discount, double totalAmount) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -24,7 +24,7 @@ public class OrderDTO {
         this.totalAmount = totalAmount;
     }
 
-    public OrderDTO(String orderId, String customerId, LocalDate orderDate, String orderTime, double discount, double totalAmount, ArrayList<OrderDetailsDTO> detailsDTOS) {
+    public OrderDTO(String orderId, String customerId, String orderDate, String orderTime, double discount, double totalAmount, ArrayList<OrderDetailsDTO> detailsDTOS) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -50,11 +50,11 @@ public class OrderDTO {
         this.customerId = customerId;
     }
 
-    public LocalDate getOrderDate() {
+    public String getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDate orderDate) {
+    public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
 

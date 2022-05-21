@@ -105,8 +105,8 @@ public class CustomerServlet extends HttpServlet {
                             objectBuilder.add("data", "");
                             objectBuilder.add("message", "customer details retrieved successfully");
                             arrayBuilder.add(objectBuilder.build());
-                            writer.print(arrayBuilder.build());
                         }
+                        writer.print(arrayBuilder.build());
                     } else {
                         objectBuilder.add("status", 400);
                         objectBuilder.add("data", "");

@@ -79,38 +79,45 @@ public class AdminServlet extends HttpServlet {
                 ArrayList<AdminDTO> adminDetails = null;
                 try {
                     adminDetails = adminBo.getAdminDetails(dataSource);
-                    for (int i = 0; i < adminDetails.size(); i++) {
-                        String id = adminDetails.get(i).getId();
-                        String name = adminDetails.get(i).getName();
-                        String nic = adminDetails.get(i).getNic();
-                        int contactNo = adminDetails.get(i).getContactNo();
-                        String userName = adminDetails.get(i).getUsername();
-                        String password = adminDetails.get(i).getPassword();
-                        String address = adminDetails.get(i).getAddress();
-                        objectBuilder.add("adminId", id);
-                        objectBuilder.add("adminName", name);
-                        objectBuilder.add("adminNic", nic);
-                        objectBuilder.add("adminContactNo", contactNo);
-                        objectBuilder.add("adminUserName", userName);
-                        objectBuilder.add("adminPassword", password);
-                        objectBuilder.add("adminAddress", address);
-                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                        objectBuilder.add("status", 200);
+                    if (adminDetails != null) {
+                        for (int i = 0; i < adminDetails.size(); i++) {
+                            String id = adminDetails.get(i).getId();
+                            String name = adminDetails.get(i).getName();
+                            String nic = adminDetails.get(i).getNic();
+                            int contactNo = adminDetails.get(i).getContactNo();
+                            String userName = adminDetails.get(i).getUsername();
+                            String password = adminDetails.get(i).getPassword();
+                            String address = adminDetails.get(i).getAddress();
+                            objectBuilder.add("adminId", id);
+                            objectBuilder.add("adminName", name);
+                            objectBuilder.add("adminNic", nic);
+                            objectBuilder.add("adminContactNo", contactNo);
+                            objectBuilder.add("adminUserName", userName);
+                            objectBuilder.add("adminPassword", password);
+                            objectBuilder.add("adminAddress", address);
+                            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                            objectBuilder.add("status", 200);
+                            objectBuilder.add("data", "");
+                            objectBuilder.add("message", "Admin Details retrieved successfully");
+                            JsonObject build = objectBuilder.build();
+                            arrayBuilder.add(build);
+                        }
+                        writer.print(arrayBuilder.build());
+                    } else {
+                        objectBuilder.add("status", 400);
                         objectBuilder.add("data", "");
                         objectBuilder.add("message", "Admin Details retrieved successfully");
-                        JsonObject build = objectBuilder.build();
-                        arrayBuilder.add(build);
+                        arrayBuilder.add(objectBuilder.build());
+                        writer.print(arrayBuilder.build());
                     }
-                    JsonArray build = arrayBuilder.build();
-                    writer.print(build);
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                     resp.setStatus(200);
                     objectBuilder.add("status", 500);
                     objectBuilder.add("data", throwables.getLocalizedMessage());
                     objectBuilder.add("message", "Error");
-                    JsonObject build = objectBuilder.build();
-                    writer.print(build);
+                    arrayBuilder.add(objectBuilder.build());
+                    writer.print(arrayBuilder.build());
                 }
                 break;
             case "generateAdminId":

@@ -36,9 +36,11 @@ function setDataToOrderTable() {
                     let row = '<tr><td>' + (i + 1) + '</td><td>' + orderArray.orderId + '</td><td>' + orderArray.customerId + '</td><td>' + orderArray.orderDate + '</td><td>' + orderArray.orderTime + '</td><td>' + orderArray.discount + '</td><td>' + orderArray.total + '</td></tr>';
                     orderTableTbody.append(row);
                 } else if (arr[i].status == 400) {
-                    console.log(resp.message);
+                    $('#orderTable tbody tr').remove();
+                    return;
                 } else {
-                    alert(resp.data);
+                    $('#orderTable tbody tr').remove();
+                    return;
                 }
             }
         },

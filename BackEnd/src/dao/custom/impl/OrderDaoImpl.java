@@ -7,7 +7,6 @@ import util.CrudUtil;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class OrderDaoImpl implements OrderDao {
@@ -31,7 +30,7 @@ public class OrderDaoImpl implements OrderDao {
         ResultSet rst = CrudUtil.getExecuteQuery(dataSource, "SELECT * FROM `order`");
         ArrayList<Order> orders = new ArrayList<>();
         while (rst.next()) {
-            orders.add(new Order(rst.getString(1), rst.getString(2), LocalDate.parse(rst.getString(3)), rst.getString(4), rst.getDouble(5), rst.getDouble(6)));
+            orders.add(new Order(rst.getString(1), rst.getString(2), rst.getString(3), rst.getString(4), rst.getDouble(5), rst.getDouble(6)));
         }
         return orders;
     }
@@ -41,7 +40,7 @@ public class OrderDaoImpl implements OrderDao {
     public Order search(String s, DataSource dataSource) throws SQLException {
         ResultSet rst = CrudUtil.getExecuteQuery(dataSource, "SELECT * FROM `ORDER` WHERE orderId=?", s);
         if (rst.next()) {
-            return new Order(rst.getString(1), rst.getString(2), LocalDate.parse(rst.getString(3)), rst.getString(4), rst.getDouble(5), rst.getDouble(6));
+            return new Order(rst.getString(1), rst.getString(2), rst.getString(3), rst.getString(4), rst.getDouble(5), rst.getDouble(6));
         }
         return null;
     }

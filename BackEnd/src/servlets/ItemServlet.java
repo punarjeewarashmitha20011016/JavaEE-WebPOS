@@ -46,10 +46,9 @@ public class ItemServlet extends HttpServlet {
                 writer.print(objectBuilder.build());
                 dataSource.getConnection().close();
             } else {
-                resp.setStatus(HttpServletResponse.SC_ACCEPTED);
                 objectBuilder.add("status", 400);
                 objectBuilder.add("data", "");
-                objectBuilder.add("message", "Item saved successfully");
+                objectBuilder.add("message", "Item saved unsuccessfully");
                 writer.print(objectBuilder.build());
                 dataSource.getConnection().close();
             }
@@ -73,34 +72,36 @@ public class ItemServlet extends HttpServlet {
             case "getAll":
                 try {
                     ArrayList<ItemDTO> all = itemFormBO.getAll(dataSource);
-                    for (ItemDTO i : all
-                    ) {
-                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                        objectBuilder.add("itemCode", i.getItemCode());
-                        objectBuilder.add("itemDescription", i.getItemDescription());
-                        objectBuilder.add("itemQty", i.getItemQty());
-                        objectBuilder.add("itemBuyingPrice", i.getItemBuyingPrice());
-                        objectBuilder.add("itemUnitPrice", i.getItemUnitPrice());
-                        objectBuilder.add("itemDiscount", i.getItemDiscount());
-                        objectBuilder.add("status", 200);
-                        objectBuilder.add("message", "Item Details retrieved successfully");
+                    if (all != null) {
+                        for (ItemDTO i : all
+                        ) {
+                            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                            objectBuilder.add("itemCode", i.getItemCode());
+                            objectBuilder.add("itemDescription", i.getItemDescription());
+                            objectBuilder.add("itemQty", i.getItemQty());
+                            objectBuilder.add("itemBuyingPrice", i.getItemBuyingPrice());
+                            objectBuilder.add("itemUnitPrice", i.getItemUnitPrice());
+                            objectBuilder.add("itemDiscount", i.getItemDiscount());
+                            objectBuilder.add("status", 200);
+                            objectBuilder.add("message", "Item Details retrieved successfully");
+                            objectBuilder.add("data", "");
+                            arrayBuilder.add(objectBuilder.build());
+                        }
+                        writer.print(arrayBuilder.build());
+                    } else {
+                        objectBuilder.add("status", 400);
+                        objectBuilder.add("message", "Item Details retrieved unsuccessfully");
                         objectBuilder.add("data", "");
                         arrayBuilder.add(objectBuilder.build());
+                        writer.print(arrayBuilder.build());
                     }
-                    writer.print(arrayBuilder.build());
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                     resp.setStatus(200);
                     objectBuilder.add("status", 500);
                     objectBuilder.add("message", "");
-                    objectBuilder.add("data", throwables.getLocalizedMessage());
-                    writer.print(objectBuilder.build());
-                }
-
-                try {
-                    dataSource.getConnection().close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
+                    arrayBuilder.add(objectBuilder.build());
+                    writer.print(arrayBuilder.build());
                 }
                 break;
             case "searchItem":
@@ -132,11 +133,6 @@ public class ItemServlet extends HttpServlet {
                     objectBuilder.add("message", "Error");
                     objectBuilder.add("data", throwables.getLocalizedMessage());
                     writer.print(objectBuilder.build());
-                }
-                try {
-                    dataSource.getConnection().close();
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
                 }
                 break;
             case "ifItemExists":
@@ -175,6 +171,7 @@ public class ItemServlet extends HttpServlet {
                         objectBuilder.add("status", 200);
                         objectBuilder.add("message", "Itemcode generated successfully");
                         objectBuilder.add("data", "");
+                        System.out.println("Item Code generated = " + itemCodeGenerated);
                         objectBuilder.add("itemCode", itemCodeGenerated);
                         writer.print(objectBuilder.build());
                     } else {
@@ -191,8 +188,12 @@ public class ItemServlet extends HttpServlet {
                     objectBuilder.add("data", throwables.getLocalizedMessage());
                     writer.print(objectBuilder.build());
                 }
-
                 break;
+        }
+        try {
+            dataSource.getConnection().close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 

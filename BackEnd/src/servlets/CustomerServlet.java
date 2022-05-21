@@ -93,26 +93,35 @@ public class CustomerServlet extends HttpServlet {
                 JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
                 try {
                     ArrayList<CustomerDTO> all = customerFormBO.getAll(dataSource);
-                    for (CustomerDTO dto : all) {
-                        resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                        objectBuilder.add("id", dto.getId());
-                        objectBuilder.add("name", dto.getName());
-                        objectBuilder.add("contactNo", dto.getContactNo());
-                        objectBuilder.add("nic", dto.getNic());
-                        objectBuilder.add("address", dto.getAddress());
-                        objectBuilder.add("status", 200);
+                    if (all != null) {
+                        for (CustomerDTO dto : all) {
+                            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                            objectBuilder.add("id", dto.getId());
+                            objectBuilder.add("name", dto.getName());
+                            objectBuilder.add("contactNo", dto.getContactNo());
+                            objectBuilder.add("nic", dto.getNic());
+                            objectBuilder.add("address", dto.getAddress());
+                            objectBuilder.add("status", 200);
+                            objectBuilder.add("data", "");
+                            objectBuilder.add("message", "customer details retrieved successfully");
+                            arrayBuilder.add(objectBuilder.build());
+                            writer.print(arrayBuilder.build());
+                        }
+                    } else {
+                        objectBuilder.add("status", 400);
                         objectBuilder.add("data", "");
-                        objectBuilder.add("message", "customer details retrieved successfully");
+                        objectBuilder.add("message", "customer details retrieved unsuccessfully");
                         arrayBuilder.add(objectBuilder.build());
+                        writer.print(arrayBuilder.build());
                     }
-                    writer.print(arrayBuilder.build());
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                     resp.setStatus(200);
                     objectBuilder.add("status", 500);
                     objectBuilder.add("data", throwables.getLocalizedMessage());
                     objectBuilder.add("message", "Error");
-                    writer.print(objectBuilder.build());
+                    arrayBuilder.add(objectBuilder.build());
+                    writer.print(arrayBuilder.build());
                 }
                 break;
             case "generateCustomerId":

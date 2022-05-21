@@ -147,10 +147,10 @@ function setDataToCustomerTable() {
         dataType: "json",
         contentType: "application/json",
         success: function (resp) {
-            if (resp.status == 200) {
-                let arr = resp;
-                $("#tblCus tbody tr").remove();
-                for (let i = 0; i < arr.length; i++) {
+            let arr = resp;
+            $("#tblCus tbody tr").remove();
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].status == 200) {
                     tblCusBody.append("<tr><td>" + (i + 1) + "</td><td>" + arr[i].id + "</td><td>" + arr[i].name + "</td><td>" + arr[i].nic + "</td><td>" + arr[i].contactNo + "</td><td>" + arr[i].address + "</td></tr>");
                 }
             }

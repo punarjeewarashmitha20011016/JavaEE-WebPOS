@@ -33,10 +33,8 @@ function setDataToOrderTable() {
             for (let i = 0; i < arr.length; i++) {
                 if (resp[i].status == 200) {
                     let orderArray = arr[i];
-                    for (let i = 0; i < orderArray.length; i++) {
-                        let row = '<tr><td>' + (i + 1) + '</td><td>' + orderArray[i].orderId + '</td><td>' + orderArray[i].customerId + '</td><td>' + orderArray[i].orderDate + '</td><td>' + orderArray[i].orderTim + '</td><td>' + orderArray[i].getOrderDiscount() + '</td><td>' + orderArray[i].getOrderTotalAmount() + '</td></tr>';
-                        orderTableTbody.append(row);
-                    }
+                    let row = '<tr><td>' + (i + 1) + '</td><td>' + orderArray.orderId + '</td><td>' + orderArray.customerId + '</td><td>' + orderArray.orderDate + '</td><td>' + orderArray.orderTime + '</td><td>' + orderArray.discount + '</td><td>' + orderArray.total + '</td></tr>';
+                    orderTableTbody.append(row);
                 } else if (arr[i].status == 400) {
                     console.log(resp.message);
                 } else {
